@@ -1,10 +1,112 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+    <servlet>
+        <servlet-name>LoginServlet</servlet-name>
+        <servlet-class>controller.LoginServlet</servlet-class>
+        <init-param>
+            <param-name>jdbcClassName</param-name>
+            <param-value>org.apache.derby.jdbc.ClientDriver</param-value>
+        </init-param>
+        <init-param>
+            <param-name>dbUserName</param-name>
+            <param-value>app</param-value>
+            <!--<param-value>root</param-value>-->
+        </init-param>
+        <init-param>
+            <param-name>dbPassword</param-name>
+            <param-value>app</param-value>
+        </init-param>
+        <init-param>
+            <param-name>jdbcDriverURL</param-name>
+            <param-value>jdbc:derby</param-value>
+        </init-param>
+        <init-param>
+            <param-name>dbHostName</param-name>
+            <param-value>localhost</param-value>
+        </init-param>
+        <init-param>
+            <param-name>dbPort</param-name>
+            <param-value>1527</param-value>
+        </init-param>
+        <init-param>
+            <param-name>databaseName</param-name>
+            <param-value>LoginDB</param-value>
+        </init-param>
+    </servlet>
+    <servlet>
+        <servlet-name>SeedingServlet</servlet-name>
+        <servlet-class>controller.SeedingServlet</servlet-class>
+        <init-param>
+            <param-name>jdbcClassName</param-name>
+            <param-value>org.apache.derby.jdbc.ClientDriver</param-value>
+        </init-param>
+        <init-param>
+            <param-name>dbUserName</param-name>
+            <param-value>app</param-value>
+            <!--<param-value>root</param-value>-->
+        </init-param>
+        <init-param>
+            <param-name>dbPassword</param-name>
+            <param-value>app</param-value>
+        </init-param>
+        <init-param>
+            <param-name>jdbcDriverURL</param-name>
+            <param-value>jdbc:derby</param-value>
+        </init-param>
+        <init-param>
+            <param-name>dbHostName</param-name>
+            <param-value>localhost</param-value>
+        </init-param>
+        <init-param>
+            <param-name>dbPort</param-name>
+            <param-value>1527</param-value>
+        </init-param>
+        <init-param>
+            <param-name>databaseName</param-name>
+            <param-value>LoginDB</param-value>
+        </init-param>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LoginServlet</servlet-name>
+        <url-pattern>/success</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SeedingServlet</servlet-name>
+        <url-pattern>/seed</url-pattern>
+    </servlet-mapping>
     <session-config>
         <session-timeout>
             30
         </session-timeout>
     </session-config>
+    <context-param>
+        <param-name>secretKey</param-name>
+        <param-value>caesarsaladisyum</param-value>
+    </context-param>
+    <context-param>
+        <param-name>cipherAlgorithm</param-name>
+        <param-value>AES</param-value>
+    </context-param>
+    <context-param>
+        <param-name>cipherMode</param-name>
+        <param-value>ECB</param-value>
+    </context-param>
+    <context-param>
+        <param-name>cipherPadding</param-name>
+        <param-value>PKCS5Padding</param-value>
+    </context-param>
+    <context-param>
+        <param-name>DerbyURL</param-name>
+        <param-value>jdbc:derby://localhost:1527/UserDB</param-value>
+    </context-param>
+    <context-param>
+        <param-name>DerbyUser</param-name>
+        <param-value>caesarsaladisyum</param-value>
+    </context-param>
+    <context-param>
+        <param-name>DerbyPass</param-name>
+        <param-value>caesarsaladisyum</param-value>
+    </context-param>
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
