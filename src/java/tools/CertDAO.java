@@ -15,6 +15,8 @@ import javax.sql.DataSource;
 
 public class CertDAO {
 
+    public CertDAO(){}
+    
     private Connection getConnection() throws SQLException, NamingException {
         Context initContext = new InitialContext();
         Context envContext = (Context) initContext.lookup("java:comp/env");
@@ -38,6 +40,16 @@ public class CertDAO {
             
         } catch (SQLException | NamingException e) {
             System.err.println("CertDB Insert Error:");
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    public boolean testConnection() {
+        try (Connection conn = getConnection()) {
+            return conn != null && !conn.isClosed();
+        } catch (Exception e) {
+            System.err.println("DAO Connection test failed:");
             e.printStackTrace();
             return false;
         }

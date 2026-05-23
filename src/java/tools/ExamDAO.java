@@ -19,6 +19,16 @@ public class ExamDAO {
         DataSource ds = (DataSource) envContext.lookup("jdbc/ExamDB");
         return ds.getConnection();
     }
+    
+    public boolean testConnection() {
+        try (Connection conn = getConnection()) {
+            return conn != null && !conn.isClosed();
+        } catch (Exception e) {
+            System.err.println("DAO Connection test failed:");
+            e.printStackTrace();
+            return false;
+        }
+    }
 
     // Returns a List of String Arrays: Index 0 = Question, Index 1 = Correct Answer
     public List<String[]> getExamQuestions(String courseName) {

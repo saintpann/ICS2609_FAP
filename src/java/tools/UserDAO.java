@@ -17,7 +17,16 @@ public class UserDAO {
         DataSource ds = (DataSource) envContext.lookup("jdbc/UserDB");
         return ds.getConnection();
     }
-
+    
+    public boolean testConnection() {
+        try (Connection conn = getConnection()) {
+            return conn != null && !conn.isClosed();
+        } catch (Exception e) {
+            System.err.println("DAO Connection test failed:");
+            e.printStackTrace();
+            return false;
+        }
+    }
     public String authenticateAndGetRole(String inputUname, String encryptedAttempt) {
         String query = "SELECT pass, role FROM Users WHERE uname = ?";
         
