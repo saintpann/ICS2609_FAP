@@ -78,9 +78,29 @@
         <servlet-name>ReportServlet</servlet-name>
         <servlet-class>controller.ReportServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ConnectionTestServlet</servlet-name>
+        <servlet-class>controller.ConnectionTestServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>HomeServlet</servlet-name>
+        <servlet-class>controller.HomeServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>CaptchaServlet</servlet-name>
+        <servlet-class>controller.CaptchaServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>LogoutServlet</servlet-name>
+        <servlet-class>controller.LogoutServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>DirectoryServlet</servlet-name>
+        <servlet-class>controller.DirectoryServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
-        <url-pattern>/success</url-pattern>
+        <url-pattern>/login</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>SeedingServlet</servlet-name>
@@ -97,6 +117,26 @@
     <servlet-mapping>
         <servlet-name>ReportServlet</servlet-name>
         <url-pattern>/generateReport</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>HomeServlet</servlet-name>
+        <url-pattern>/home</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CaptchaServlet</servlet-name>
+        <url-pattern>/captcha</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ConnectionTestServlet</servlet-name>
+        <url-pattern>/test</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>LogoutServlet</servlet-name>
+        <url-pattern>/logout</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DirectoryServlet</servlet-name>
+        <url-pattern>/directory</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
@@ -125,11 +165,35 @@
     </context-param>
     <context-param>
         <param-name>DerbyUser</param-name>
-        <param-value>caesarsaladisyum</param-value>
+        <param-value>app</param-value>
     </context-param>
     <context-param>
         <param-name>DerbyPass</param-name>
-        <param-value>caesarsaladisyum</param-value>
+        <param-value>app</param-value>
+    </context-param>
+    <context-param>
+        <param-name>ExamDBURL</param-name>
+        <param-value>jdbc:postgresql://localhost:5432/ExamDB</param-value>
+    </context-param>
+    <context-param>
+        <param-name>ExamDBUser</param-name>
+        <param-value>postgres</param-value>
+    </context-param>
+    <context-param>
+        <param-name>ExamDBPass</param-name>
+        <param-value>stephenpangan</param-value>
+    </context-param>
+    <context-param>
+        <param-name>CertDBURL</param-name>
+        <param-value>jdbc:mysql://localhost:3306/CertDB</param-value>
+    </context-param>
+    <context-param>
+        <param-name>CertDBUser</param-name>
+        <param-value>root</param-value>
+    </context-param>
+    <context-param>
+        <param-name>CertDBPass</param-name>
+        <param-value/>
     </context-param>
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
@@ -148,7 +212,7 @@
         <!-- Define pages or paths that the security guard should ignore -->
         <init-param>
             <param-name>excludedPaths</param-name>
-            <param-value>/login.jsp,/css/main.css</param-value>
+            <param-value>/index.jsp,/css/main.css</param-value>
         </init-param>
     </filter>
     <!-- Derby Reference -->

@@ -1,30 +1,30 @@
 package tools;
+
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.sql.DataSource;
+import javax.servlet.ServletContext;
 import tools.Cryptograph;
 
 public class DataSeeder {
 
-    // 1. The JNDI Connection Method (Same as your UserDAO)
-    private static Connection getConnection() throws SQLException, NamingException {
-        Context initContext = new InitialContext();
-        Context envContext = (Context) initContext.lookup("java:comp/env");
-        DataSource ds = (DataSource) envContext.lookup("jdbc/UserDB");
-        return ds.getConnection();
+    // Helper method to connect to Derby using web.xml parameters
+    private static Connection getConnection(ServletContext context) throws SQLException, ClassNotFoundException {
+        Class.forName("org.apache.derby.jdbc.ClientDriver");
+        String url = context.getInitParameter("DerbyURL");
+        String user = context.getInitParameter("DerbyUser");
+        String pass = context.getInitParameter("DerbyPass");
+        return DriverManager.getConnection(url, user, pass);
     }
 
-    // 2. The Seeding Logic
-    public static String seedDatabase(String secretKey, String algo, String mode, String padding) {
+    // 2. The Seeding Logic (Now accepts ServletContext)
+    public static String seedDatabase(ServletContext context, String secretKey, String algo, String mode, String padding) {
         
         String insertQuery = "INSERT INTO Users (uname, pass, role) VALUES (?, ?, ?)";
         
-        // try-with-resources handles fetching from the pool and returning it
-        try (Connection conn = getConnection();
+        // try-with-resources handles fetching from the DriverManager and securely closing it
+        try (Connection conn = getConnection(context);
              PreparedStatement pstmt = conn.prepareStatement(insertQuery)) {
 
             // Initialize Cryptograph with the parameters passed from the Servlet
@@ -58,7 +58,7 @@ public class DataSeeder {
             int[] results = pstmt.executeBatch();
             return "SUCCESS: Seeded " + results.length + " users into Derby. Default password is 'password123'.";
 
-        } catch (SQLException | NamingException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
             return "ERROR: Database connection or execution failed. Check server logs.";
         } catch (Exception e) {

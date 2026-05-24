@@ -7,22 +7,21 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-public class LoginServlet extends HttpServlet {
+public class LogoutServlet extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
             
-        // Get the current session, but don't create a new one
+        // 1. Fetch the current session, but pass 'false' so we don't accidentally create a new one
         HttpSession session = request.getSession(false);
         
-        // Check for "currentUser" instead of "userObj"
-        if (session != null && session.getAttribute("currentUser") != null) {
-            // User is already logged in, send them to the HomeServlet (dashboard router)
-            response.sendRedirect(request.getContextPath() + "/home");
-        } else {
-            // No active session found, forward to the login page
-            request.getRequestDispatcher("/index.jsp").forward(request, response);
+        // 2. If a session exists, invalidate it to destroy the "currentUser" object
+        if (session != null) {
+            session.invalidate();
         }
+        
+        // 3. Redirect back to the login page
+        response.sendRedirect(request.getContextPath() + "/index.jsp");
     }
 
     @Override

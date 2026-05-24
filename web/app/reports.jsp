@@ -1,4 +1,9 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="tools.User" %>
+<%
+    // Safely cast the user object for displaying the name in the HTML
+    User currentUser = (User) session.getAttribute("currentUser");
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -71,10 +76,10 @@
             <span class="fw-bold fs-5 text-dark">EduPortal Admin</span>
         </div>
         <nav class="nav flex-column">
-            <a class="nav-link-custom" href="admin_dashboard.jsp"><i class="bi bi-sliders"></i> Control Center</a>
+            <a class="nav-link-custom" href="${pageContext.request.contextPath}/admin_dashboard.jsp"><i class="bi bi-sliders"></i> Control Center</a>
             <a class="nav-link-custom active" href="#"><i class="bi bi-file-earmark-bar-graph-fill"></i> System Reports</a>
             <hr class="mx-3 text-muted">
-            <a class="nav-link-custom text-danger" href="LogoutServlet"><i class="bi bi-box-arrow-left"></i> Sign Out</a>
+            <a class="nav-link-custom text-danger" href="logout"><i class="bi bi-box-arrow-left"></i> Sign Out</a>
         </nav>
     </aside>
 
@@ -87,7 +92,7 @@
         <div class="card report-card">
             <h5 class="fw-bold text-dark mb-4">Time-Bound Audit Parameters</h5>
             
-            <form action="GenerateReportServlet" method="GET">
+            <form action="${pageContext.request.contextPath}/generateReport" method="GET">
                 <div class="row g-3 mb-4">
                     <div class="col-12 col-sm-6">
                         <label class="form-label small fw-semibold text-secondary">Start Date Boundary</label>

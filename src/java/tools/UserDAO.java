@@ -1,27 +1,32 @@
 package tools;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList; // Added import
 import java.util.List;      // Added import
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.servlet.ServletContext;
 import javax.sql.DataSource;
 
 public class UserDAO {
 
-    private Connection getConnection() throws SQLException, NamingException {
-        Context initContext = new InitialContext();
-        Context envContext = (Context) initContext.lookup("java:comp/env");
-        DataSource ds = (DataSource) envContext.lookup("jdbc/UserDB");
-        return ds.getConnection();
+    private Connection getConnection(ServletContext context) throws SQLException, ClassNotFoundException {
+    Class.forName("org.apache.derby.jdbc.ClientDriver");
+    String url = context.getInitParameter("DerbyURL");
+    String user = context.getInitParameter("DerbyUser");
+    String pass = context.getInitParameter("DerbyPass");
+    return DriverManager.getConnection(url, user, pass);
     }
     
-    public boolean testConnection() {
-        try (Connection conn = getConnection()) {
+    public boolean testConnection(ServletContext context) {
+        try (Connection conn = getConnection(context)) {
             return conn != null && !conn.isClosed();
         } catch (Exception e) {
             System.err.println("DAO Connection test failed:");
@@ -30,59 +35,51 @@ public class UserDAO {
         }
     }
 
-    public String authenticateAndGetRole(String inputUname, String encryptedAttempt) {
-        String query = "SELECT pass, role FROM Users WHERE uname = ?";
+    public User authenticateUser(ServletContext context, String username, String password) {
+        String query = "SELECT role FROM Users WHERE uname = ? AND pass = ?";
         
-        try (Connection conn = getConnection();
+        try (Connection conn = getConnection(context);
              PreparedStatement pstmt = conn.prepareStatement(query)) {
             
-            pstmt.setString(1, inputUname);
+            pstmt.setString(1, username);
+            pstmt.setString(2, password);
             
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
-                    String encryptedDbPass = rs.getString("pass");
-                    
-                    if (encryptedDbPass.equals(encryptedAttempt)) {
-                        return rs.getString("role");
-                    }
+                    String role = rs.getString("role");
+                    // Construct and return the User object
+                    return new User(username, role); 
                 }
             }
-        } catch (SQLException | NamingException e) {
+        } catch (Exception e) {
             System.err.println("UserDB Authentication Error:");
             e.printStackTrace();
         }
+        
+        // Return null if authentication fails
         return null; 
     }
 
     // fetches users for Report
-    public List<String[]> getAllUsers() {
-        List<String[]> userList = new ArrayList<>();
-        String query = "SELECT id, uname, role FROM Users";
+    public java.util.List<User> getAllUsers(javax.servlet.ServletContext context) {
+        java.util.List<User> users = new java.util.ArrayList<>();
+        String query = "SELECT uname, role FROM Users ORDER BY role ASC, uname ASC";
         
-        try (Connection conn = getConnection();
+        try (Connection conn = getConnection(context);
              PreparedStatement pstmt = conn.prepareStatement(query);
              ResultSet rs = pstmt.executeQuery()) {
             
             while (rs.next()) {
-                String[] user = new String[3];
-                
-                try {
-                    user[0] = rs.getString("id"); 
-                } catch (SQLException e) {
-                    user[0] = "N/A"; // if no id column exists
-                }
-                
-                user[1] = rs.getString("uname");
-                user[2] = rs.getString("role");
-                
-                userList.add(user);
+                User u = new User();
+                u.setUsername(rs.getString("uname"));
+                u.setRole(rs.getString("role"));
+                users.add(u);
             }
-            
-        } catch (SQLException | NamingException e) {
-            System.err.println("UserDB Retrieval Error (getAllUsers):");
+        } catch (Exception e) {
+            System.err.println("UserDB Directory Retrieval Error:");
             e.printStackTrace();
         }
-        
-        return userList;
+        return users;
     }
+    
 }

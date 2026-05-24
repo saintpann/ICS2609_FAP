@@ -48,7 +48,6 @@ public class AuthenticationFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
         
-        // Cast the generic servlet requests/responses to HTTP-specific ones
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
         
@@ -56,14 +55,17 @@ public class AuthenticationFilter implements Filter {
         httpResponse.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1
         httpResponse.setHeader("Pragma", "no-cache"); // HTTP 1.0
         httpResponse.setDateHeader("Expires", 0); // Proxies
-        HttpSession session = httpRequest.getSession(false);
-        boolean loggedIn = (session != null && session.getAttribute("uname") != null);
         
+        HttpSession session = httpRequest.getSession(false);
+        
+        // 2. CHANGED: Check for "currentUser" instead of "uname"
+        boolean loggedIn = (session != null && session.getAttribute("currentUser") != null);
         
         if (loggedIn) {
-            // User is authenticated! Pass the request down the chain to the intended JSP/Servlet
+            // User is authenticated! Pass the request down the chain
             chain.doFilter(request, response);
         } else {
+            // Not authenticated. Kick back to index.jsp
             httpResponse.sendRedirect(httpRequest.getContextPath() + "/index.jsp");
         }
     }

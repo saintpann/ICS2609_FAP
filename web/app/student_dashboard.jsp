@@ -1,12 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="tools.User" %>
 <%
-    // Security check: ensure user is logged in
+    // Safely cast the user object for displaying the name in the HTML
     User currentUser = (User) session.getAttribute("currentUser");
-    if (currentUser == null) {
-        response.sendRedirect(request.getContextPath() + "/login.jsp");
-        return;
-    }
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -150,7 +146,7 @@
             <a class="nav-link-custom" href="#"><i class="bi bi-bar-chart-line"></i> Performance</a>
             <a class="nav-link-custom" href="#"><i class="bi bi-gear"></i> Settings</a>
             <hr class="mx-3 text-muted">
-            <a class="nav-link-custom text-danger" href="${pageContext.request.contextPath}/login.jsp"><i class="bi bi-box-arrow-left"></i> Sign Out</a>
+            <a class="nav-link-custom text-danger" href="logout"><i class="bi bi-box-arrow-left"></i> Sign Out</a>
         </nav>
     </aside>
 
@@ -190,7 +186,7 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <span class="text-muted small fw-semibold text-uppercase">Certifications</span>
-                            <h3 class="fw-bold m-0 mt-1">0</h3>
+                            <h3 class="fw-bold m-0 mt-1"><%= certCount %></h3>
                         </div>
                         <div class="icon-box" style="background-color: rgba(45, 212, 191, 0.1); color: #2DD4BF;">
                             <i class="bi bi-patch-check fs-4"></i>
@@ -204,7 +200,7 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <span class="text-muted small fw-semibold text-uppercase">Overall Average</span>
-                            <h3 class="fw-bold m-0 mt-1">--%</h3>
+                            <h3 class="fw-bold m-0 mt-1"><%= String.format("%.1f", averageScore) %>%</h3>
                         </div>
                         <div class="icon-box" style="background-color: rgba(251, 191, 36, 0.1); color: #FBBF24;">
                             <i class="bi bi-award fs-4"></i>
@@ -213,7 +209,26 @@
                 </div>
             </div>
         </section>
-
+        <section class="mb-5">
+            <h5 class="fw-bold mb-4">Your Earned Certifications</h5>
+            <% if (certs.isEmpty()) { %>
+                <div class="alert alert-light border text-muted">
+                    You haven't earned any certifications yet. Take an exam below to get started!
+                </div>
+            <% } else { %>
+                <div class="list-group">
+                    <% for (Map<String, String> cert : certs) { %>
+                        <div class="list-group-item d-flex justify-content-between align-items-center p-3">
+                            <div>
+                                <h6 class="mb-1 fw-bold text-success"><i class="bi bi-patch-check-fill me-2"></i><%= cert.get("course_name") %></h6>
+                                <small class="text-muted">Issued: <%= cert.get("issue_date") %></small>
+                            </div>
+                            <span class="badge bg-primary rounded-pill fs-6"><%= cert.get("score") %>%</span>
+                        </div>
+                    <% } %>
+                </div>
+            <% } %>
+        </section>                    
         <section>
             <h5 class="fw-bold mb-4">Available Certification Exams</h5>
             <div class="row g-4">

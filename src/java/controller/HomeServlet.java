@@ -58,7 +58,7 @@ public class HomeServlet extends HttpServlet {
                 UserDAO userDao = new UserDAO();
                 
                 // Fetch the populated User object from the DAO
-                User currentUser = userDao.authenticateUser(inputUname, encryptedAttempt);
+                User currentUser = userDao.authenticateUser(getServletContext(),inputUname, encryptedAttempt);
 
                 if (currentUser != null) {
                     HttpSession session = request.getSession(true);

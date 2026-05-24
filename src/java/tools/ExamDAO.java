@@ -1,6 +1,7 @@
 
 package tools;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,19 +10,21 @@ import java.util.List;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.servlet.ServletContext;
 import javax.sql.DataSource;
 
 public class ExamDAO {
 
-    private Connection getConnection() throws SQLException, NamingException {
-        Context initContext = new InitialContext();
-        Context envContext = (Context) initContext.lookup("java:comp/env");
-        DataSource ds = (DataSource) envContext.lookup("jdbc/ExamDB");
-        return ds.getConnection();
+    private Connection getConnection(ServletContext context) throws SQLException, ClassNotFoundException {
+        Class.forName("org.postgresql.Driver");
+        String url = context.getInitParameter("ExamDBURL");
+        String user = context.getInitParameter("ExamDBUser");
+        String pass = context.getInitParameter("ExamDBPass");
+        return DriverManager.getConnection(url, user, pass);
     }
     
-    public boolean testConnection() {
-        try (Connection conn = getConnection()) {
+    public boolean testConnection(ServletContext context) {
+        try (Connection conn = getConnection(context)) {
             return conn != null && !conn.isClosed();
         } catch (Exception e) {
             System.err.println("DAO Connection test failed:");
@@ -30,12 +33,13 @@ public class ExamDAO {
         }
     }
 
-    // Returns a List of String Arrays: Index 0 = Question, Index 1 = Correct Answer
-    public List<String[]> getExamQuestions(String courseName) {
+    public List<String[]> getExamQuestions(ServletContext context, String courseName) {
         List<String[]> examData = new ArrayList<>();
-        String query = "SELECT question_text, correct_answer FROM Exam_Bank WHERE course_name = ?";
-
-        try (Connection conn = getConnection();
+        String query = "SELECT q.question_text, q.correct_answer " +
+               "FROM Questions q " +
+               "JOIN Courses c ON q.course_id = c.course_id " +
+               "WHERE c.course_code = ?";
+        try (Connection conn = getConnection(context);
              PreparedStatement pstmt = conn.prepareStatement(query)) {
              
             pstmt.setString(1, courseName);
@@ -49,7 +53,7 @@ public class ExamDAO {
                 }
             }
             
-        } catch (SQLException | NamingException e) {
+        } catch (Exception e) {
             System.err.println("ExamDB Retrieval Error:");
             e.printStackTrace();
         }

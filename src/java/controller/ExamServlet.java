@@ -11,10 +11,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import tools.ExamDAO;
 import tools.CertDAO;
+import tools.User; // Import the User object we created
 
-@WebServlet(name = "ExamServlet", urlPatterns = {"/takeExam"})
 public class ExamServlet extends HttpServlet {
 
+    // --- Task 4: Load Exam ---
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -26,7 +27,9 @@ public class ExamServlet extends HttpServlet {
 
         try {
             ExamDAO examDAO = new ExamDAO();
-            List<String[]> examData = examDAO.getExamQuestions(courseId);
+            
+            // Pass getServletContext() to read credentials from web.xml
+            List<String[]> examData = examDAO.getExamQuestions(getServletContext(), courseId);
             
             request.setAttribute("examQuestions", examData);
             request.setAttribute("courseId", courseId);
@@ -41,22 +44,29 @@ public class ExamServlet extends HttpServlet {
         }
     }
 
+    // --- Task 5: Submit & Grade Exam ---
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
         HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("uname") == null) {
-            response.sendRedirect("login.jsp");
+        
+        // Use the new "currentUser" attribute we setup in HomeServlet
+        if (session == null || session.getAttribute("currentUser") == null) {
+            response.sendRedirect("login");
             return;
         }
         
-        String username = (String) session.getAttribute("uname");
+        // Extract the username from the User object
+        User loggedInUser = (User) session.getAttribute("currentUser");
+        String username = loggedInUser.getUsername();
+        
         String courseId = request.getParameter("courseId");
 
         try {
             ExamDAO examDAO = new ExamDAO();
-            List<String[]> answerKey = examDAO.getExamQuestions(courseId);
+            // Pass getServletContext()
+            List<String[]> answerKey = examDAO.getExamQuestions(getServletContext(), courseId);
             
             int score = 0;
             int totalQuestions = answerKey.size();
@@ -76,7 +86,8 @@ public class ExamServlet extends HttpServlet {
             }
 
             CertDAO certDAO = new CertDAO();
-            boolean isSaved = certDAO.saveCertification(username, courseId, percentage);
+            // Pass getServletContext() and save the score to MySQL
+            boolean isSaved = certDAO.saveCertification(getServletContext(), username, courseId, percentage);
 
             if (isSaved) {
                 request.setAttribute("finalScore", percentage);

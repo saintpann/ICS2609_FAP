@@ -2,6 +2,7 @@ package controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -13,7 +14,6 @@ import tools.UserDAO;
 import tools.CertDAO;
 import tools.ExamDAO;
 
-@WebServlet(name = "ConnectionTestServlet", urlPatterns = {"/test"})
 public class ConnectionTestServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -36,7 +36,8 @@ public class ConnectionTestServlet extends HttpServlet {
 
             // 1. Test UserDAO (Derby)
             UserDAO userDao = new UserDAO();
-            if (userDao.testConnection()) {
+            ServletContext context = getServletContext();
+            if (userDao.testConnection(context)) {
                 out.println("<div class='success'>✅ <strong>tools.UserDAO (Derby):</strong> Online and connected.</div>");
             } else {
                 out.println("<div class='error'>❌ <strong>tools.UserDAO (Derby):</strong> Connection Failed. Check server logs.</div>");
@@ -44,7 +45,7 @@ public class ConnectionTestServlet extends HttpServlet {
 
             // 2. Test CertDAO (MySQL)
             CertDAO certDao = new CertDAO();
-            if (certDao.testConnection()) {
+            if (certDao.testConnection(context)) {
                 out.println("<div class='success'>✅ <strong>tools.CertDAO (MySQL):</strong> Online and connected.</div>");
             } else {
                 out.println("<div class='error'>❌ <strong>tools.CertDAO (MySQL):</strong> Connection Failed. Check server logs.</div>");
@@ -52,7 +53,7 @@ public class ConnectionTestServlet extends HttpServlet {
 
             // 3. Test ExamDAO (PostgreSQL)
             ExamDAO examDao = new ExamDAO();
-            if (examDao.testConnection()) {
+            if (examDao.testConnection(context)) {
                 out.println("<div class='success'>✅ <strong>tools.ExamDAO (PostgreSQL):</strong> Online and connected.</div>");
             } else {
                 out.println("<div class='error'>❌ <strong>tools.ExamDAO (PostgreSQL):</strong> Connection Failed. Check server logs.</div>");

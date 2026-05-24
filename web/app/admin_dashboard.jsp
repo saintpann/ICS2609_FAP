@@ -1,4 +1,9 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="tools.User" %>
+<%
+    // Safely cast the user object for displaying the name in the HTML
+    User currentUser = (User) session.getAttribute("currentUser");
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -68,9 +73,9 @@
         </div>
         <nav class="nav flex-column">
             <a class="nav-link-custom active" href="#"><i class="bi bi-sliders"></i> Control Center</a>
-            <a class="nav-link-custom" href="reports.jsp"><i class="bi bi-file-earmark-bar-graph-fill"></i> System Reports</a>
+            <a class="nav-link-custom" href="${pageContext.request.contextPath}/app/reports.jsp"><i class="bi bi-file-earmark-bar-graph-fill"></i> System Reports</a>
             <hr class="mx-3 text-muted">
-            <a class="nav-link-custom text-danger" href="LogoutServlet"><i class="bi bi-box-arrow-left"></i> Sign Out</a>
+            <a class="nav-link-custom text-danger" href="logout"><i class="bi bi-box-arrow-left"></i> Sign Out</a>
         </nav>
     </aside>
 
@@ -85,14 +90,14 @@
                 <div class="card bento-card">
                     <h5 class="fw-bold text-dark">User System Accounts</h5>
                     <p class="text-muted small">View, provision, audit, or restrict active student and faculty nodes across the directory repository.</p>
-                    <a href="#" class="btn btn-light btn-sm fw-semibold mt-3 w-50" style="color: #8B5CF6;">View Directory →</a>
+                    <a href="${pageContext.request.contextPath}/directory" class="btn btn-light btn-sm fw-semibold mt-3 w-50" style="color: #8B5CF6;">View Directory →</a>
                 </div>
             </div>
             <div class="col-12 col-md-6">
                 <div class="card bento-card">
                     <h5 class="fw-bold text-dark">Report Engine Center</h5>
                     <p class="text-muted small">Configure date range metrics to evaluate score sheets and log system audits instantly.</p>
-                    <a href="reports.jsp" class="btn btn-light btn-sm fw-semibold mt-3 w-50" style="color: #2DD4BF;">Open Reports Form →</a>
+                    <a href="${pageContext.request.contextPath}/app/reports.jsp" class="btn btn-light btn-sm fw-semibold mt-3 w-50" style="color: #2DD4BF;">Open Reports Form →</a>
                 </div>
             </div>
         </section>
