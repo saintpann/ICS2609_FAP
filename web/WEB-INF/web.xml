@@ -20,6 +20,10 @@
         <servlet-name>HomeServlet</servlet-name>
         <servlet-class>controller.HomeServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ExamIntroServlet</servlet-name>
+        <servlet-class>controller.ExamIntroServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
         <url-pattern>/success</url-pattern>
@@ -39,6 +43,10 @@
     <servlet-mapping>
         <servlet-name>HomeServlet</servlet-name>
         <url-pattern>/home</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ExamIntroServlet</servlet-name>
+        <url-pattern>/ExamIntroServlet</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
@@ -62,7 +70,7 @@
         <param-value>PKCS5Padding</param-value>
     </context-param>
     <welcome-file-list>
-        <welcome-file>app/login.jsp</welcome-file>
+        <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
     <error-page>
         <error-code>404</error-code>
@@ -78,7 +86,7 @@
         <!-- Define pages or paths that the security guard should ignore -->
         <init-param>
             <param-name>excludedPaths</param-name>
-            <param-value>/login.jsp,/css/main.css</param-value>
+            <param-value>/index.jsp,/css/main.css</param-value>
         </init-param>
     </filter>
     <!-- Derby Reference -->

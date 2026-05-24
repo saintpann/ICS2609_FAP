@@ -12,7 +12,6 @@ import tools.Cryptograph;
 import tools.UserDAO;
 import tools.User; // Import your new Model
 
-@WebServlet(name = "HomeServlet", urlPatterns = {"/HomeServlet"})
 public class HomeServlet extends HttpServlet {
 
     @Override
@@ -42,8 +41,8 @@ public class HomeServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        String inputUname = request.getParameter("uname");
-        String inputPass = request.getParameter("pass");
+        String inputUname = request.getParameter("username").trim();
+        String inputPass = request.getParameter("password").trim();
 
         if (inputUname != null && inputPass != null) {
             try {
@@ -67,7 +66,7 @@ public class HomeServlet extends HttpServlet {
                     // Attach the entire User object to the session
                     session.setAttribute("currentUser", currentUser);
                     
-                    response.sendRedirect(request.getContextPath() + "/HomeServlet");
+                    response.sendRedirect(request.getContextPath() + "/home");
                     return;
                 }
             } catch (Exception e) {
@@ -76,6 +75,6 @@ public class HomeServlet extends HttpServlet {
             }
         }
         
-        response.sendRedirect(request.getContextPath() + "/login.jsp?error=invalid");
+        response.sendRedirect(request.getContextPath() + "/index.jsp?error=invalid");
     }
 }
