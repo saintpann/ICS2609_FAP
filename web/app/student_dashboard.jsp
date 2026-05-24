@@ -1,11 +1,35 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="tools.User" %>
+<%@ page import="tools.CertDAO" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.util.Map" %>
 <%
-    // Safely cast the user object for displaying the name in the HTML
+    // 1. SECURITY: Ensure user is logged in
     User currentUser = (User) session.getAttribute("currentUser");
+    if (currentUser == null) {
+        response.sendRedirect(request.getContextPath() + "/index.jsp");
+        return;
+    }
+    
+    // 2. DATA FETCHING: Get certifications
+    CertDAO certDAO = new CertDAO();
+    // application is the ServletContext in JSP
+    List<Map<String, String>> certs = certDAO.getStudentCertifications(application, currentUser.getUsername());
+    
+    // 3. LOGIC: Calculate metrics (Initialize with 0 to prevent "non-existing" errors)
+    int certCount = (certs != null) ? certs.size() : 0;
+    double totalScore = 0;
+    if (certs != null) {
+        for (Map<String, String> cert : certs) {
+            try {
+                totalScore += Double.parseDouble(cert.get("score"));
+            } catch (Exception e) {
+                // Ignore parsing errors
+            }
+        }
+    }
+    double averageScore = (certCount > 0) ? (totalScore / certCount) : 0.0;
 %>
-<!DOCTYPE html>
-<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

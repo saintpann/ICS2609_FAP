@@ -5,7 +5,7 @@
                           res-type="javax.sql.DataSource" 
                           datasource-classname="org.postgresql.ds.PGSimpleDataSource">
         <property name="User" value="postgres"/>
-        <property name="Password" value="stephenpangan"/>
+        <property name="Password" value="1"/>
         <property name="DatabaseName" value="ExamDB"/>
         <property name="ServerName" value="localhost"/>
         <property name="PortNumber" value="5432"/>

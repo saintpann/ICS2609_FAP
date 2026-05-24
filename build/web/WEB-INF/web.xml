@@ -98,6 +98,10 @@
         <servlet-name>DirectoryServlet</servlet-name>
         <servlet-class>controller.DirectoryServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>TableInitializationServlet</servlet-name>
+        <servlet-class>controller.TableInitializationServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
         <url-pattern>/login</url-pattern>
@@ -137,6 +141,10 @@
     <servlet-mapping>
         <servlet-name>DirectoryServlet</servlet-name>
         <url-pattern>/directory</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>TableInitializationServlet</servlet-name>
+        <url-pattern>/create</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
@@ -181,7 +189,7 @@
     </context-param>
     <context-param>
         <param-name>ExamDBPass</param-name>
-        <param-value>stephenpangan</param-value>
+        <param-value>1</param-value>
     </context-param>
     <context-param>
         <param-name>CertDBURL</param-name>
@@ -193,7 +201,7 @@
     </context-param>
     <context-param>
         <param-name>CertDBPass</param-name>
-        <param-value/>
+        <param-value>root</param-value>
     </context-param>
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
