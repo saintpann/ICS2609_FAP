@@ -21,7 +21,7 @@ public class DataSeeder {
     // 2. The Seeding Logic
     public static String seedDatabase(String secretKey, String algo, String mode, String padding) {
         
-        String insertQuery = "INSERT INTO Users (uname, pass, role) VALUES (?, ?, ?)";
+        String insertQuery = "INSERT INTO USERS(uname, pass, role) VALUES (?, ?, ?)";
         
         // try-with-resources handles fetching from the pool and returning it
         try (Connection conn = getConnection();
