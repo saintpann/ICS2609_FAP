@@ -4,11 +4,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList; // Added import
+import java.util.List;      // Added import
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
-import tools.User; // Import your new Model
 
 public class UserDAO {
 
@@ -19,10 +20,17 @@ public class UserDAO {
         return ds.getConnection();
     }
     
-    // ... testConnection() remains unchanged ...
+    public boolean testConnection() {
+        try (Connection conn = getConnection()) {
+            return conn != null && !conn.isClosed();
+        } catch (Exception e) {
+            System.err.println("DAO Connection test failed:");
+            e.printStackTrace();
+            return false;
+        }
+    }
 
-    // Upgraded to return a User object
-    public User authenticateUser(String inputUname, String encryptedAttempt) {
+    public String authenticateAndGetRole(String inputUname, String encryptedAttempt) {
         String query = "SELECT pass, role FROM Users WHERE uname = ?";
         
         try (Connection conn = getConnection();
@@ -35,8 +43,7 @@ public class UserDAO {
                     String encryptedDbPass = rs.getString("pass");
                     
                     if (encryptedDbPass.equals(encryptedAttempt)) {
-                        // Package the data into the object
-                        return new User(inputUname, rs.getString("role"));
+                        return rs.getString("role");
                     }
                 }
             }
@@ -44,15 +51,38 @@ public class UserDAO {
             System.err.println("UserDB Authentication Error:");
             e.printStackTrace();
         }
-        return null; // Return null if authentication fails
+        return null; 
     }
-    public boolean testConnection() {
-        try (Connection conn = getConnection()) {
-            return conn != null && !conn.isClosed();
-        } catch (Exception e) {
-            System.err.println("DAO Connection test failed:");
+
+    // fetches users for Report
+    public List<String[]> getAllUsers() {
+        List<String[]> userList = new ArrayList<>();
+        String query = "SELECT id, uname, role FROM Users";
+        
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query);
+             ResultSet rs = pstmt.executeQuery()) {
+            
+            while (rs.next()) {
+                String[] user = new String[3];
+                
+                try {
+                    user[0] = rs.getString("id"); 
+                } catch (SQLException e) {
+                    user[0] = "N/A"; // if no id column exists
+                }
+                
+                user[1] = rs.getString("uname");
+                user[2] = rs.getString("role");
+                
+                userList.add(user);
+            }
+            
+        } catch (SQLException | NamingException e) {
+            System.err.println("UserDB Retrieval Error (getAllUsers):");
             e.printStackTrace();
-            return false;
         }
+        
+        return userList;
     }
 }

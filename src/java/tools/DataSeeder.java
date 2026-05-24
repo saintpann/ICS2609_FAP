@@ -1,92 +1,69 @@
 package tools;
-
-import java.sql.*;
-import javax.naming.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.sql.DataSource;
+import tools.Cryptograph;
 
 public class DataSeeder {
 
-    // Connection for UserDB (Derby)
-    private static Connection getUserDBConnection() throws SQLException, NamingException {
+    // 1. The JNDI Connection Method (Same as your UserDAO)
+    private static Connection getConnection() throws SQLException, NamingException {
         Context initContext = new InitialContext();
         Context envContext = (Context) initContext.lookup("java:comp/env");
         DataSource ds = (DataSource) envContext.lookup("jdbc/UserDB");
         return ds.getConnection();
     }
 
-    // Connection for ExamDB (PostgreSQL)
-    private static Connection getExamDBConnection() throws SQLException, NamingException {
-        Context initContext = new InitialContext();
-        Context envContext = (Context) initContext.lookup("java:comp/env");
-        DataSource ds = (DataSource) envContext.lookup("jdbc/ExamDB");
-        return ds.getConnection();
-    }
+    // 2. The Seeding Logic
+    public static String seedDatabase(String secretKey, String algo, String mode, String padding) {
+        
+        String insertQuery = "INSERT INTO Users (uname, pass, role) VALUES (?, ?, ?)";
+        
+        // try-with-resources handles fetching from the pool and returning it
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(insertQuery)) {
 
-    /**
-     * Initializes the ExamDB tables and seeds initial course data
-     */
-    public static String initializeExamDB() {
-    try (Connection conn = getExamDBConnection();
-         Statement stmt = conn.createStatement()) {
-        
-        DatabaseMetaData dbm = conn.getMetaData();
-        
-        // 1. Create Courses Table
-        try (ResultSet tables = dbm.getTables(null, null, "COURSES", null)) {
-            if (!tables.next()) {
-                String sql = "CREATE TABLE COURSES ("
-                        + "course_id SERIAL PRIMARY KEY, "
-                        + "course_name VARCHAR(100) NOT NULL, "
-                        + "description TEXT)";
-                stmt.execute(sql);
-                System.out.println("COURSES table created.");
-            }
-        }
-
-        // 2. Create Questions Table
-        try (ResultSet tables = dbm.getTables(null, null, "QUESTIONS", null)) {
-            if (!tables.next()) {
-                String sql = "CREATE TABLE QUESTIONS ("
-                        + "question_id SERIAL PRIMARY KEY, "
-                        + "course_id INT, " // Removed REFERENCES for compatibility
-                        + "question_text TEXT NOT NULL, "
-                        + "questions_choices TEXT NOT NULL, "
-                        + "question_answer VARCHAR(255) NOT NULL)";
-                stmt.execute(sql);
-                System.out.println("QUESTIONS table created.");
-            }
-        }
-        
-        return "SUCCESS: ExamDB initialized.";
-    } catch (SQLException | NamingException e) {
-        e.printStackTrace();
-        return "ERROR: ExamDB initialization failed: " + e.getMessage();
-    }
-}
-
-    /**
-     * Original Derby Seeding Logic
-     */
-    public static String seedUserDB(String secretKey, String algo, String mode, String padding) {
-        String insertQuery = "INSERT INTO USERS(uname, pass, role) VALUES (?, ?, ?)";
-        
-        try (Connection conn = getUserDBConnection()) {
-            // Existing table creation logic
-            try (Statement stmt = conn.createStatement()) {
-                DatabaseMetaData dbm = conn.getMetaData();
-                try (ResultSet tables = dbm.getTables(null, null, "USERS", null)) {
-                    if (!tables.next()) {
-                        stmt.executeUpdate("CREATE TABLE USERS (uname VARCHAR(50) PRIMARY KEY, pass VARCHAR(255) NOT NULL, role VARCHAR(20) NOT NULL)");
-                    }
-                }
-            }
+            // Initialize Cryptograph with the parameters passed from the Servlet
+            Cryptograph crypt = new Cryptograph(secretKey, algo, mode, padding);
             
-            // Proceed with insertion...
-            // (Keep your original loop logic here)
-            return "SUCCESS: UserDB seeded.";
+            // Encrypt the default password
+            String defaultPassword = "password123";
+            String encryptedDefaultPassword = crypt.encrypt(defaultPassword);
+
+            int count = 0;
+
+            // Seed 3 Admin Users
+            for (int i = 1; i <= 3; i++) {
+                pstmt.setString(1, "admin" + i);
+                pstmt.setString(2, encryptedDefaultPassword); 
+                pstmt.setString(3, "Admin");
+                pstmt.addBatch();
+                count++;
+            }
+
+            // Seed 50 Student Users
+            for (int i = 1; i <= 50; i++) {
+                pstmt.setString(1, "student" + i);
+                pstmt.setString(2, encryptedDefaultPassword); 
+                pstmt.setString(3, "Student");
+                pstmt.addBatch();
+                count++;
+            }
+
+            // Execute the batch
+            int[] results = pstmt.executeBatch();
+            return "SUCCESS: Seeded " + results.length + " users into Derby. Default password is 'password123'.";
+
+        } catch (SQLException | NamingException e) {
+            e.printStackTrace();
+            return "ERROR: Database connection or execution failed. Check server logs.";
         } catch (Exception e) {
             e.printStackTrace();
-            return "ERROR: UserDB seeding failed.";
+            return "ERROR: Cryptography initialization failed.";
         }
     }
 }
