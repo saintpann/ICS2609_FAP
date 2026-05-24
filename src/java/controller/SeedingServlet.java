@@ -31,7 +31,8 @@ public class SeedingServlet extends HttpServlet {
             out.println("<h2>Initializing Derby Database Seeding...</h2>");
             
             // 3. Call the DataSeeder utility (DB credentials are handled by JNDI now!)
-            String resultMessage = DataSeeder.initializeExamDB();
+            String resultMessage = DataSeeder.seedDatabase(secretKey, algo, mode, padding);
+            
             out.println("<h3>Result: " + resultMessage + "</h3>");
             out.println("<a href='login.jsp'>Go to Login Page</a>");
             out.println("</body></html>");
