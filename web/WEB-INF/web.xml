@@ -3,68 +3,10 @@
     <servlet>
         <servlet-name>LoginServlet</servlet-name>
         <servlet-class>controller.LoginServlet</servlet-class>
-        <init-param>
-            <param-name>jdbcClassName</param-name>
-            <param-value>org.apache.derby.jdbc.ClientDriver</param-value>
-        </init-param>
-        <init-param>
-            <param-name>dbUserName</param-name>
-            <param-value>app</param-value>
-            <!--<param-value>root</param-value>-->
-        </init-param>
-        <init-param>
-            <param-name>dbPassword</param-name>
-            <param-value>app</param-value>
-        </init-param>
-        <init-param>
-            <param-name>jdbcDriverURL</param-name>
-            <param-value>jdbc:derby</param-value>
-        </init-param>
-        <init-param>
-            <param-name>dbHostName</param-name>
-            <param-value>localhost</param-value>
-        </init-param>
-        <init-param>
-            <param-name>dbPort</param-name>
-            <param-value>1527</param-value>
-        </init-param>
-        <init-param>
-            <param-name>databaseName</param-name>
-            <param-value>LoginDB</param-value>
-        </init-param>
     </servlet>
     <servlet>
         <servlet-name>SeedingServlet</servlet-name>
         <servlet-class>controller.SeedingServlet</servlet-class>
-        <init-param>
-            <param-name>jdbcClassName</param-name>
-            <param-value>org.apache.derby.jdbc.ClientDriver</param-value>
-        </init-param>
-        <init-param>
-            <param-name>dbUserName</param-name>
-            <param-value>app</param-value>
-            <!--<param-value>root</param-value>-->
-        </init-param>
-        <init-param>
-            <param-name>dbPassword</param-name>
-            <param-value>app</param-value>
-        </init-param>
-        <init-param>
-            <param-name>jdbcDriverURL</param-name>
-            <param-value>jdbc:derby</param-value>
-        </init-param>
-        <init-param>
-            <param-name>dbHostName</param-name>
-            <param-value>localhost</param-value>
-        </init-param>
-        <init-param>
-            <param-name>dbPort</param-name>
-            <param-value>1527</param-value>
-        </init-param>
-        <init-param>
-            <param-name>databaseName</param-name>
-            <param-value>LoginDB</param-value>
-        </init-param>
     </servlet>
     <servlet>
         <servlet-name>AuthenticationFilterServlet</servlet-name>
@@ -103,20 +45,8 @@
         <param-name>cipherPadding</param-name>
         <param-value>PKCS5Padding</param-value>
     </context-param>
-    <context-param>
-        <param-name>DerbyURL</param-name>
-        <param-value>jdbc:derby://localhost:1527/UserDB</param-value>
-    </context-param>
-    <context-param>
-        <param-name>DerbyUser</param-name>
-        <param-value>caesarsaladisyum</param-value>
-    </context-param>
-    <context-param>
-        <param-name>DerbyPass</param-name>
-        <param-value>caesarsaladisyum</param-value>
-    </context-param>
     <welcome-file-list>
-        <welcome-file>index.jsp</welcome-file>
+        <welcome-file>app/login.jsp</welcome-file>
     </welcome-file-list>
     <error-page>
         <error-code>404</error-code>
