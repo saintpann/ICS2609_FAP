@@ -1,0 +1,5 @@
+<%@ page isErrorPage="true" %>
+<%@ include file="errorheader.jsp" %>
+    <h1>Error 404</h1>
+    <p>Page not Found!</p>
+<%@ include file="errorfooter.jsp" %>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE resources PUBLIC "-//GlassFish.org//DTD GlassFish Application Server 3.1 Resource Definitions//EN" "http://glassfish.org/dtds/glassfish-resources_1_5.dtd">
+<resources>
+    <jdbc-connection-pool name="ExamDBPool" 
+                          res-type="javax.sql.DataSource" 
+                          datasource-classname="org.postgresql.ds.PGSimpleDataSource">
+        <property name="User" value="postgres"/>
+        <property name="Password" value="stephenpangan"/>
+        <property name="DatabaseName" value="ExamDB"/>
+        <property name="ServerName" value="localhost"/>
+        <property name="PortNumber" value="5432"/>
+    </jdbc-connection-pool>
+    <jdbc-resource jndi-name="jdbc/ExamDB" pool-name="ExamDBPool"/>
+
+    <jdbc-connection-pool name="UserDBPool" 
+                          res-type="javax.sql.DataSource" 
+                          datasource-classname="org.apache.derby.jdbc.ClientDataSource">
+        <property name="User" value="app"/>
+        <property name="Password" value="app"/>
+        <property name="DatabaseName" value="UserDB"/>
+        <property name="ServerName" value="localhost"/>
+        <property name="PortNumber" value="1527"/>
+    </jdbc-connection-pool>
+    <jdbc-resource jndi-name="jdbc/UserDB" pool-name="UserDBPool"/>
+    
+    <jdbc-connection-pool name="CertDBPool" 
+                          res-type="javax.sql.DataSource" 
+                          datasource-classname="com.mysql.cj.jdbc.MysqlDataSource">
+        <property name="User" value="root"/>
+        <property name="Password" value="root"/> 
+        <property name="DatabaseName" value="CertDB"/>
+        <property name="ServerName" value="localhost"/>
+        <property name="PortNumber" value="3306"/> 
+        <property name="useSSL" value="false"/>
+        <property name="allowPublicKeyRetrieval" value="true"/>
+        <property name="serverTimezone" value="UTC"/>
+    </jdbc-connection-pool>
+    
+    <jdbc-resource jndi-name="jdbc/CertDB" pool-name="CertDBPool"/>
+</resources>
