@@ -11,6 +11,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import tools.CertDAO;
 import tools.ExamDAO;
 import tools.UserDAO;
@@ -23,21 +24,11 @@ public class LoginServlet extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        CertDAO c = new CertDAO();
-        UserDAO b = new UserDAO();
-        ExamDAO a = new ExamDAO();
-        if (c.testConnection()){
-            System.out.println("cert works = MySQL");
+        HttpSession session = request.getSession(false);
+        if(session!=null){
+            response.sendRedirect("home");
         }
-        if (b.testConnection())
-        {
-            System.out.println("User works = Derby");
-        }
-        if (a.testConnection()){
-            System.out.println("exam works = postgre");
-        }
-        response.sendRedirect(request.getContextPath() + "/app/success.jsp");
+        request.getRequestDispatcher("index.jsp").forward(request, response);
     }
 
     @Override

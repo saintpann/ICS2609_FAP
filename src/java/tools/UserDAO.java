@@ -1,5 +1,5 @@
-
 package tools;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -8,6 +8,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
+import tools.User; // Import your new Model
 
 public class UserDAO {
 
@@ -18,16 +19,10 @@ public class UserDAO {
         return ds.getConnection();
     }
     
-    public boolean testConnection() {
-        try (Connection conn = getConnection()) {
-            return conn != null && !conn.isClosed();
-        } catch (Exception e) {
-            System.err.println("DAO Connection test failed:");
-            e.printStackTrace();
-            return false;
-        }
-    }
-    public String authenticateAndGetRole(String inputUname, String encryptedAttempt) {
+    // ... testConnection() remains unchanged ...
+
+    // Upgraded to return a User object
+    public User authenticateUser(String inputUname, String encryptedAttempt) {
         String query = "SELECT pass, role FROM Users WHERE uname = ?";
         
         try (Connection conn = getConnection();
@@ -40,7 +35,8 @@ public class UserDAO {
                     String encryptedDbPass = rs.getString("pass");
                     
                     if (encryptedDbPass.equals(encryptedAttempt)) {
-                        return rs.getString("role");
+                        // Package the data into the object
+                        return new User(inputUname, rs.getString("role"));
                     }
                 }
             }
@@ -48,6 +44,15 @@ public class UserDAO {
             System.err.println("UserDB Authentication Error:");
             e.printStackTrace();
         }
-        return null; 
+        return null; // Return null if authentication fails
+    }
+    public boolean testConnection() {
+        try (Connection conn = getConnection()) {
+            return conn != null && !conn.isClosed();
+        } catch (Exception e) {
+            System.err.println("DAO Connection test failed:");
+            e.printStackTrace();
+            return false;
+        }
     }
 }

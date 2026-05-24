@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     
+    <script src="https://www.google.com/recaptcha/api.js" asynch defer></script>
     <style>
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
@@ -77,7 +78,7 @@
                         <div>Sample Error Message Here</div>
                     </div>
 
-                <form id="loginForm" action="LoginServlet" method="POST" class="needs-validation" novalidate>
+                <form id="loginForm" action="home" method="POST" class="needs-validation" novalidate>
                     <div class="mb-3">
                         <label for="username" class="form-label fw-semibold text-secondary small">Username</label>
                         <div class="input-group">
@@ -97,7 +98,7 @@
                     </div>
 
                     <div class="mb-4 d-flex justify-content-center">
-                        <div class="g-recaptcha" data-sitekey="YOUR_RECAPTCHA_SITE_KEY_HERE" data-callback="recaptchaCallback"></div>
+                        <div class="g-recaptcha" data-sitekey="6LfR17osAAAAAPbAHLNDt_1tKx2wz590ktorCjxZ" data-callback="recaptchaCallback"></div>
                     </div>
                     <div id="captcha-error" class="text-danger small text-center mb-3 d-none">
                         Please verify that you are not a robot.

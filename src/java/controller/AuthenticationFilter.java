@@ -64,7 +64,7 @@ public class AuthenticationFilter implements Filter {
             // User is authenticated! Pass the request down the chain to the intended JSP/Servlet
             chain.doFilter(request, response);
         } else {
-            httpResponse.sendRedirect(httpRequest.getContextPath() + "/index.jsp");
+            httpResponse.sendRedirect(httpRequest.getContextPath() + "/login");
         }
     }
     @Override
