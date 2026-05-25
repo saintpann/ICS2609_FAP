@@ -1,4 +1,14 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="tools.User" %>
+<%
+    // Check if the user is already authenticated
+    if (session != null && session.getAttribute("currentUser") != null) {
+        // Redirect them to the HomeServlet, which handles dashboard routing automatically
+        response.sendRedirect(request.getContextPath() + "/home");
+        return; // Stop processing the rest of index.jsp
+    }
+%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -188,7 +198,7 @@
                             <label for="password" class="form-label">Password</label>
                             <div class="input-group">
                                 <span class="input-group-text" id="password-addon"><i class="bi bi-key"></i></span>
-                                <input type="password" id="password" name="password" class="form-control" placeholder="••••••••" required>
+                                <input type="password" id="password" name="password" class="form-control" placeholder="********" required>
                                 <div class="invalid-feedback">Password is required.</div>
                             </div>
                         </div>
