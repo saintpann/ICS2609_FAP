@@ -2,7 +2,7 @@ package controller;
 
 import java.io.IOException;
 import java.util.List;
-import javax.servlet.RequestDispatcher;
+import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -10,97 +10,44 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import tools.ExamDAO;
-import tools.CertDAO;
-import tools.User; // Import the User object we created
+import tools.User;
 
+@WebServlet(name = "ExamServlet", urlPatterns = {"/takeExam"})
 public class ExamServlet extends HttpServlet {
 
-    // --- Task 4: Load Exam ---
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        String courseId = request.getParameter("courseId");
-        if (courseId == null) {
-            courseId = "Java101"; 
-        }
-
-        try {
-            ExamDAO examDAO = new ExamDAO();
-            
-            // Pass getServletContext() to read credentials from web.xml
-            List<String[]> examData = examDAO.getExamQuestions(getServletContext(), courseId);
-            
-            request.setAttribute("examQuestions", examData);
-            request.setAttribute("courseId", courseId);
-
-            RequestDispatcher dispatcher = request.getRequestDispatcher("/take-exam.jsp");
-            dispatcher.forward(request, response);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            request.setAttribute("errorMessage", "Database Error: Unable to load the exam.");
-            request.getRequestDispatcher("/general_error.jsp").forward(request, response);
-        }
-    }
-
-    // --- Task 5: Submit & Grade Exam ---
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        
         HttpSession session = request.getSession(false);
-        
-        // Use the new "currentUser" attribute we setup in HomeServlet
-        if (session == null || session.getAttribute("currentUser") == null) {
-            response.sendRedirect("login");
+        User currentUser = (session != null) ? (User) session.getAttribute("currentUser") : null;
+        if (currentUser == null) {
+            response.sendRedirect(request.getContextPath() + "/index.jsp");
             return;
         }
-        
-        // Extract the username from the User object
-        User loggedInUser = (User) session.getAttribute("currentUser");
-        String username = loggedInUser.getUsername();
-        
-        String courseId = request.getParameter("courseId");
 
-        try {
-            ExamDAO examDAO = new ExamDAO();
-            // Pass getServletContext()
-            List<String[]> answerKey = examDAO.getExamQuestions(getServletContext(), courseId);
-            
-            int score = 0;
-            int totalQuestions = answerKey.size();
-            
-            for (int i = 0; i < totalQuestions; i++) {
-                String submittedAnswer = request.getParameter("answer_" + i);
-                String correctAnswer = answerKey.get(i)[1]; 
+        ExamDAO examDAO = new ExamDAO();
+        String courseIdStr = request.getParameter("courseId");
+        String courseCode = request.getParameter("courseCode"); 
+
+        if (courseIdStr == null || courseIdStr.trim().isEmpty()) {
+            // Load the list of available courses
+            List<Map<String, String>> courses = examDAO.getAllCourses(getServletContext());
+            request.setAttribute("courses", courses);
+            request.getRequestDispatcher("/app/exam_list.jsp").forward(request, response);
+        } else {
+            // Load the specific exam form
+            try {
+                int courseId = Integer.parseInt(courseIdStr);
+                List<Map<String, String>> questions = examDAO.getQuestionsForCourse(getServletContext(), courseId);
                 
-                if (submittedAnswer != null && submittedAnswer.equalsIgnoreCase(correctAnswer)) {
-                    score++;
-                }
+                request.setAttribute("courseId", courseId);
+                request.setAttribute("courseCode", courseCode);
+                request.setAttribute("questions", questions);
+                request.getRequestDispatcher("/app/exam_form.jsp").forward(request, response);
+            } catch (NumberFormatException e) {
+                response.sendRedirect(request.getContextPath() + "/takeExam");
             }
-            
-            double percentage = 0;
-            if (totalQuestions > 0) {
-                percentage = ((double) score / totalQuestions) * 100;
-            }
-
-            CertDAO certDAO = new CertDAO();
-            // Pass getServletContext() and save the score to MySQL
-            boolean isSaved = certDAO.saveCertification(getServletContext(), username, courseId, percentage);
-
-            if (isSaved) {
-                request.setAttribute("finalScore", percentage);
-                request.setAttribute("successMessage", "Exam submitted! You scored: " + String.format("%.2f", percentage) + "%");
-                request.getRequestDispatcher("/student_dashboard.jsp").forward(request, response);
-            } else {
-                throw new Exception("Failed to save certification to MySQL.");
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            request.setAttribute("errorMessage", "Error calculating and saving exam score.");
-            request.getRequestDispatcher("/general_error.jsp").forward(request, response);
         }
     }
 }

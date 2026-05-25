@@ -3,68 +3,10 @@
     <servlet>
         <servlet-name>LoginServlet</servlet-name>
         <servlet-class>controller.LoginServlet</servlet-class>
-        <init-param>
-            <param-name>jdbcClassName</param-name>
-            <param-value>org.apache.derby.jdbc.ClientDriver</param-value>
-        </init-param>
-        <init-param>
-            <param-name>dbUserName</param-name>
-            <param-value>app</param-value>
-            <!--<param-value>root</param-value>-->
-        </init-param>
-        <init-param>
-            <param-name>dbPassword</param-name>
-            <param-value>app</param-value>
-        </init-param>
-        <init-param>
-            <param-name>jdbcDriverURL</param-name>
-            <param-value>jdbc:derby</param-value>
-        </init-param>
-        <init-param>
-            <param-name>dbHostName</param-name>
-            <param-value>localhost</param-value>
-        </init-param>
-        <init-param>
-            <param-name>dbPort</param-name>
-            <param-value>1527</param-value>
-        </init-param>
-        <init-param>
-            <param-name>databaseName</param-name>
-            <param-value>LoginDB</param-value>
-        </init-param>
     </servlet>
     <servlet>
         <servlet-name>SeedingServlet</servlet-name>
         <servlet-class>controller.SeedingServlet</servlet-class>
-        <init-param>
-            <param-name>jdbcClassName</param-name>
-            <param-value>org.apache.derby.jdbc.ClientDriver</param-value>
-        </init-param>
-        <init-param>
-            <param-name>dbUserName</param-name>
-            <param-value>app</param-value>
-            <!--<param-value>root</param-value>-->
-        </init-param>
-        <init-param>
-            <param-name>dbPassword</param-name>
-            <param-value>app</param-value>
-        </init-param>
-        <init-param>
-            <param-name>jdbcDriverURL</param-name>
-            <param-value>jdbc:derby</param-value>
-        </init-param>
-        <init-param>
-            <param-name>dbHostName</param-name>
-            <param-value>localhost</param-value>
-        </init-param>
-        <init-param>
-            <param-name>dbPort</param-name>
-            <param-value>1527</param-value>
-        </init-param>
-        <init-param>
-            <param-name>databaseName</param-name>
-            <param-value>LoginDB</param-value>
-        </init-param>
     </servlet>
     <servlet>
         <servlet-name>AuthenticationFilterServlet</servlet-name>
@@ -97,6 +39,18 @@
     <servlet>
         <servlet-name>DirectoryServlet</servlet-name>
         <servlet-class>controller.DirectoryServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>UserSettingsServlet</servlet-name>
+        <servlet-class>controller.UserSettingsServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AdminUserServlet</servlet-name>
+        <servlet-class>controller.AdminUserServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>GradeServlet</servlet-name>
+        <servlet-class>controller.GradeServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
@@ -137,6 +91,18 @@
     <servlet-mapping>
         <servlet-name>DirectoryServlet</servlet-name>
         <url-pattern>/directory</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UserSettingsServlet</servlet-name>
+        <url-pattern>/userSettings</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AdminUserServlet</servlet-name>
+        <url-pattern>/adminAction</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>GradeServlet</servlet-name>
+        <url-pattern>/gradeExam</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
@@ -215,25 +181,4 @@
             <param-value>/index.jsp,/css/main.css</param-value>
         </init-param>
     </filter>
-    <!-- Derby Reference -->
-    <resource-ref>
-        <description>Derby Database for User Authentication Data</description>
-        <res-ref-name>jdbc/UserDB</res-ref-name>
-        <res-type>javax.sql.DataSource</res-type>
-        <res-auth>Container</res-auth>
-    </resource-ref>
-    <!-- MySQL Reference -->
-    <resource-ref>
-        <description>MySQL Database for Student Certifications</description>
-        <res-ref-name>jdbc/CertDB</res-ref-name>
-        <res-type>javax.sql.DataSource</res-type>
-        <res-auth>Container</res-auth>
-    </resource-ref>
-    <!-- PostgreSQL Reference -->
-    <resource-ref>
-        <description>PostgreSQL Database for the Exam Bank</description>
-        <res-ref-name>jdbc/ExamDB</res-ref-name>
-        <res-type>javax.sql.DataSource</res-type>
-        <res-auth>Container</res-auth>
-    </resource-ref>
 </web-app>

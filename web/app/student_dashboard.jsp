@@ -11,9 +11,8 @@
         return;
     }
 
-    // 2. DATA FETCHING: Get certifications
+    // 2. DATA FETCHING: Get certifications (Now pulling from PostgreSQL!)
     CertDAO certDAO = new CertDAO();
-    // application is the ServletContext in JSP
     List<Map<String, String>> certs = certDAO.getStudentCertifications(application, currentUser.getUsername());
 
     // 3. LOGIC: Calculate metrics (Initialize with 0 to prevent "non-existing" errors)
@@ -261,12 +260,13 @@
             <span class="fw-bold fs-5 text-white">EduPortal</span>
         </div>
         <nav class="nav flex-column">
-            <a class="nav-link-custom active" href="#"><i class="bi bi-grid-1x2-fill"></i> Dashboard</a>
-            <a class="nav-link-custom" href="#"><i class="bi bi-journal-text"></i> Exams</a>
-            <a class="nav-link-custom" href="#"><i class="bi bi-bar-chart-line"></i> Performance</a>
-            <a class="nav-link-custom" href="#"><i class="bi bi-gear"></i> Settings</a>
-            <hr class="mx-3 opacity-20" style="color: var(--text-muted);">
-            <a class="nav-link-custom text-danger" href="logout"><i class="bi bi-box-arrow-left"></i> Sign Out</a>
+            <a class="nav-link-custom active" href="${pageContext.request.contextPath}/app/student_dashboard.jsp"><i class="bi bi-house-door-fill text-primary"></i> Dashboard</a>
+            <a class="nav-link-custom" href="${pageContext.request.contextPath}/takeExam"><i class="bi bi-pencil-square"></i> Take Exam</a>
+            
+            <hr class="mx-3 border-secondary border-opacity-50">
+            
+            <a class="nav-link-custom" href="${pageContext.request.contextPath}/settings.jsp"><i class="bi bi-gear-fill"></i> Account Settings</a>
+            <a class="nav-link-custom text-danger" href="${pageContext.request.contextPath}/logout"><i class="bi bi-box-arrow-left"></i> Sign Out</a>
         </nav>
     </aside>
 
@@ -341,7 +341,7 @@
                         <div class="list-group-item d-flex justify-content-between align-items-center p-3">
                             <div>
                                 <h6 class="mb-1 fw-bold" style="color: var(--accent-teal);">
-                                    <i class="bi bi-patch-check-fill me-2"></i><%= cert.get("course_name") %>
+                                    <i class="bi bi-patch-check-fill me-2"></i><%= cert.get("course_code") %>
                                 </h6>
                                 <small style="color: var(--text-muted);">Issued: <%= cert.get("issue_date") %></small>
                             </div>
@@ -351,21 +351,52 @@
                 </div>
             <% } %>
         </section>
+        
+        <section class="mb-5 border-top pt-4 mt-5" style="border-color: var(--border-glass) !important;">
+            <h5 class="fw-bold mb-4 text-white">Export Records</h5>
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card metric-card p-4 h-100 bg-transparent">
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="bi bi-person-lines-fill fs-3 me-3" style="color: #0D6EFD;"></i>
+                            <h6 class="fw-bold text-white m-0">Personal Account Record</h6>
+                        </div>
+                        <p class="text-muted small mb-4">Download a complete landscape PDF of your profile and exam history.</p>
+                        <a href="${pageContext.request.contextPath}/generateReport?action=selfReport" class="btn btn-outline-primary btn-sm fw-bold w-100 py-2 mt-auto">
+                            <i class="bi bi-download me-1"></i> Download My Record
+                        </a>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card metric-card p-4 h-100 bg-transparent">
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="bi bi-award-fill fs-3 me-3" style="color: #8B5CF6;"></i>
+                            <h6 class="fw-bold text-white m-0">Print Certificates</h6>
+                        </div>
+                        <p class="text-muted small mb-4">Generate official printable certificate cards for your completed courses.</p>
+                        <a href="${pageContext.request.contextPath}/generateReport?action=printCertificates" class="btn btn-sm fw-bold w-100 py-2 mt-auto" style="background-color: #8B5CF6; color: white;">
+                            <i class="bi bi-printer me-1"></i> Print Certificates
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
 
         <section class="mb-4">
             <h5 class="fw-bold mb-4 text-white">Available Certification Exams</h5>
             <div class="row g-4">
+                
                 <div class="col-12 col-md-6 col-xl-4">
-                    <div class="exam-card" onclick="window.location.href='ExamIntroServlet?courseId=1'">
+                    <div class="exam-card" onclick="window.location.href='${pageContext.request.contextPath}/takeExam?courseId=1&courseCode=JAVA101'">
                         <div class="exam-img-container">
                             <img src="${pageContext.request.contextPath}/images/image_58c1fe.png" alt="Java Web Development" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                             <i class="bi bi-code-slash text-purple" style="font-size: 3.5rem; color: #a78bfa; display:none;"></i>
                         </div>
                         <div class="p-4 flex-grow-1 d-flex flex-column">
-                            <h6 class="fw-bold mb-2">Java Web Development</h6>
+                            <h6 class="fw-bold mb-2 text-white">Java Web Development</h6>
                             <p style="color: var(--text-muted);" class="small mb-4 flex-grow-1">Master enterprise Java architectures, Servlet life cycles, and advanced JSP integrations.</p>
                             <div class="d-flex justify-content-between align-items-center mt-auto">
-                                <span class="badge bg-dark border text-white small" style="border-color: var(--border-glass) !important;"><i class="bi bi-ui-checks-grid me-1"></i> Multiple Choice</span>
+                                <span class="badge bg-dark border text-white small" style="border-color: var(--border-glass) !important;"><i class="bi bi-ui-checks-grid me-1"></i> Short Answer</span>
                                 <span class="fw-semibold small" style="color: var(--accent-purple);">Start Exam <i class="bi bi-arrow-right"></i></span>
                             </div>
                         </div>
@@ -373,16 +404,16 @@
                 </div>
 
                 <div class="col-12 col-md-6 col-xl-4">
-                    <div class="exam-card" onclick="window.location.href='ExamIntroServlet?courseId=2'">
+                    <div class="exam-card" onclick="window.location.href='${pageContext.request.contextPath}/takeExam?courseId=2&courseCode=DEV201'">
                         <div class="exam-img-container">
                             <img src="${pageContext.request.contextPath}/images/image_58c216.png" alt="DevOps Engineering" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                             <i class="bi bi-infinity" style="font-size: 3.5rem; color: #2DD4BF; display:none;"></i>
                         </div>
                         <div class="p-4 flex-grow-1 d-flex flex-column">
-                            <h6 class="fw-bold mb-2">DevOps Engineering</h6>
+                            <h6 class="fw-bold mb-2 text-white">DevOps Engineering</h6>
                             <p style="color: var(--text-muted);" class="small mb-4 flex-grow-1">Validate your knowledge in CI/CD pipelines, containerization, and infrastructure as code.</p>
                             <div class="d-flex justify-content-between align-items-center mt-auto">
-                                <span class="badge bg-dark border text-white small" style="border-color: var(--border-glass) !important;"><i class="bi bi-ui-checks-grid me-1"></i> Multiple Choice</span>
+                                <span class="badge bg-dark border text-white small" style="border-color: var(--border-glass) !important;"><i class="bi bi-ui-checks-grid me-1"></i> Short Answer</span>
                                 <span class="fw-semibold small" style="color: var(--accent-purple);">Start Exam <i class="bi bi-arrow-right"></i></span>
                             </div>
                         </div>
@@ -390,15 +421,15 @@
                 </div>
 
                 <div class="col-12 col-md-6 col-xl-4">
-                    <div class="exam-card" onclick="window.location.href='ExamIntroServlet?courseId=3'">
+                    <div class="exam-card" onclick="window.location.href='${pageContext.request.contextPath}/takeExam?courseId=3&courseCode=PYT301'">
                         <div class="exam-img-container" style="color: #38bdf8;">
                             <i class="bi bi-filetype-py" style="font-size: 3.5rem;"></i>
                         </div>
                         <div class="p-4 flex-grow-1 d-flex flex-column">
-                            <h6 class="fw-bold mb-2">Python Programming</h6>
+                            <h6 class="fw-bold mb-2 text-white">Python Programming</h6>
                             <p style="color: var(--text-muted);" class="small mb-4 flex-grow-1">Test your proficiency in Python algorithms, data structures, and object-oriented paradigms.</p>
                             <div class="d-flex justify-content-between align-items-center mt-auto">
-                                <span class="badge bg-dark border text-white small" style="border-color: var(--border-glass) !important;"><i class="bi bi-ui-checks-grid me-1"></i> Multiple Choice</span>
+                                <span class="badge bg-dark border text-white small" style="border-color: var(--border-glass) !important;"><i class="bi bi-ui-checks-grid me-1"></i> Short Answer</span>
                                 <span class="fw-semibold small" style="color: var(--accent-purple);">Start Exam <i class="bi bi-arrow-right"></i></span>
                             </div>
                         </div>
@@ -406,15 +437,15 @@
                 </div>
 
                 <div class="col-12 col-md-6 col-xl-4">
-                    <div class="exam-card" onclick="window.location.href='ExamIntroServlet?courseId=4'">
+                    <div class="exam-card" onclick="window.location.href='${pageContext.request.contextPath}/takeExam?courseId=4&courseCode=AGI401'">
                         <div class="exam-img-container" style="color: var(--accent-gold);">
                             <i class="bi bi-arrow-repeat" style="font-size: 3.5rem;"></i>
                         </div>
                         <div class="p-4 flex-grow-1 d-flex flex-column">
-                            <h6 class="fw-bold mb-2">Agile ScrumMaster</h6>
+                            <h6 class="fw-bold mb-2 text-white">Agile ScrumMaster</h6>
                             <p style="color: var(--text-muted);" class="small mb-4 flex-grow-1">Official evaluation covering Agile methodologies, sprint planning, and Scrum ceremonies.</p>
                             <div class="d-flex justify-content-between align-items-center mt-auto">
-                                <span class="badge bg-dark border text-white small" style="border-color: var(--border-glass) !important;"><i class="bi bi-ui-checks-grid me-1"></i> Multiple Choice</span>
+                                <span class="badge bg-dark border text-white small" style="border-color: var(--border-glass) !important;"><i class="bi bi-ui-checks-grid me-1"></i> Short Answer</span>
                                 <span class="fw-semibold small" style="color: var(--accent-purple);">Start Exam <i class="bi bi-arrow-right"></i></span>
                             </div>
                         </div>
@@ -422,15 +453,15 @@
                 </div>
 
                 <div class="col-12 col-md-6 col-xl-4">
-                    <div class="exam-card" onclick="window.location.href='ExamIntroServlet?courseId=5'">
+                    <div class="exam-card" onclick="window.location.href='${pageContext.request.contextPath}/takeExam?courseId=5&courseCode=ITIL501'">
                         <div class="exam-img-container" style="color: #4ade80;">
                             <i class="bi bi-diagram-3-fill" style="font-size: 3.5rem;"></i>
                         </div>
                         <div class="p-4 flex-grow-1 d-flex flex-column">
-                            <h6 class="fw-bold mb-2">ITIL 4 Foundation</h6>
+                            <h6 class="fw-bold mb-2 text-white">ITIL 4 Foundation</h6>
                             <p style="color: var(--text-muted);" class="small mb-4 flex-grow-1">Demonstrate understanding of modern IT service management and organizational value delivery.</p>
                             <div class="d-flex justify-content-between align-items-center mt-auto">
-                                <span class="badge bg-dark border text-white small" style="border-color: var(--border-glass) !important;"><i class="bi bi-ui-checks-grid me-1"></i> Multiple Choice</span>
+                                <span class="badge bg-dark border text-white small" style="border-color: var(--border-glass) !important;"><i class="bi bi-ui-checks-grid me-1"></i> Short Answer</span>
                                 <span class="fw-semibold small" style="color: var(--accent-purple);">Start Exam <i class="bi bi-arrow-right"></i></span>
                             </div>
                         </div>
@@ -438,15 +469,15 @@
                 </div>
 
                 <div class="col-12 col-md-6 col-xl-4">
-                    <div class="exam-card" onclick="window.location.href='ExamIntroServlet?courseId=6'">
+                    <div class="exam-card" onclick="window.location.href='${pageContext.request.contextPath}/takeExam?courseId=6&courseCode=SEC601'">
                         <div class="exam-img-container" style="color: #f87171;">
                             <i class="bi bi-shield-lock-fill" style="font-size: 3.5rem;"></i>
                         </div>
                         <div class="p-4 flex-grow-1 d-flex flex-column">
-                            <h6 class="fw-bold mb-2">Cybersecurity Fundamentals</h6>
+                            <h6 class="fw-bold mb-2 text-white">Cybersecurity Fundamentals</h6>
                             <p style="color: var(--text-muted);" class="small mb-4 flex-grow-1">Assess your knowledge of threat vectors, network defense mechanisms, and access control.</p>
                             <div class="d-flex justify-content-between align-items-center mt-auto">
-                                <span class="badge bg-dark border text-white small" style="border-color: var(--border-glass) !important;"><i class="bi bi-ui-checks-grid me-1"></i> Multiple Choice</span>
+                                <span class="badge bg-dark border text-white small" style="border-color: var(--border-glass) !important;"><i class="bi bi-ui-checks-grid me-1"></i> Short Answer</span>
                                 <span class="fw-semibold small" style="color: var(--accent-purple);">Start Exam <i class="bi bi-arrow-right"></i></span>
                             </div>
                         </div>
@@ -454,15 +485,15 @@
                 </div>
 
                 <div class="col-12 col-md-6 col-xl-4">
-                    <div class="exam-card" onclick="window.location.href='ExamIntroServlet?courseId=7'">
+                    <div class="exam-card" onclick="window.location.href='${pageContext.request.contextPath}/takeExam?courseId=7&courseCode=CMP701'">
                         <div class="exam-img-container" style="color: #c084fc;">
                             <i class="bi bi-pc-display" style="font-size: 3.5rem;"></i>
                         </div>
                         <div class="p-4 flex-grow-1 d-flex flex-column">
-                            <h6 class="fw-bold mb-2">CompTIA A+ Certification</h6>
+                            <h6 class="fw-bold mb-2 text-white">CompTIA A+ Certification</h6>
                             <p style="color: var(--text-muted);" class="small mb-4 flex-grow-1">Prove your ability to support IT enterprise systems by validating hardware, networks, and OS metrics.</p>
                             <div class="d-flex justify-content-between align-items-center mt-auto">
-                                <span class="badge bg-dark border text-white small" style="border-color: var(--border-glass) !important;"><i class="bi bi-ui-checks-grid me-1"></i> Multiple Choice</span>
+                                <span class="badge bg-dark border text-white small" style="border-color: var(--border-glass) !important;"><i class="bi bi-ui-checks-grid me-1"></i> Short Answer</span>
                                 <span class="fw-semibold small" style="color: var(--accent-purple);">Start Exam <i class="bi bi-arrow-right"></i></span>
                             </div>
                         </div>
@@ -470,15 +501,15 @@
                 </div>
 
                 <div class="col-12 col-md-6 col-xl-4">
-                    <div class="exam-card" onclick="window.location.href='ExamIntroServlet?courseId=8'">
+                    <div class="exam-card" onclick="window.location.href='${pageContext.request.contextPath}/takeExam?courseId=8&courseCode=CMP801'">
                         <div class="exam-img-container" style="color: #f97316;">
                             <i class="bi bi-fingerprint" style="font-size: 3.5rem;"></i>
                         </div>
                         <div class="p-4 flex-grow-1 d-flex flex-column">
-                            <h6 class="fw-bold mb-2">CompTIA Security+</h6>
+                            <h6 class="fw-bold mb-2 text-white">CompTIA Security+</h6>
                             <p style="color: var(--text-muted);" class="small mb-4 flex-grow-1">Validate the baseline skills necessary to improve global network resilience operations.</p>
                             <div class="d-flex justify-content-between align-items-center mt-auto">
-                                <span class="badge bg-dark border text-white small" style="border-color: var(--border-glass) !important;"><i class="bi bi-ui-checks-grid me-1"></i> Multiple Choice</span>
+                                <span class="badge bg-dark border text-white small" style="border-color: var(--border-glass) !important;"><i class="bi bi-ui-checks-grid me-1"></i> Short Answer</span>
                                 <span class="fw-semibold small" style="color: var(--accent-purple);">Start Exam <i class="bi bi-arrow-right"></i></span>
                             </div>
                         </div>
@@ -486,15 +517,15 @@
                 </div>
 
                 <div class="col-12 col-md-6 col-xl-4">
-                    <div class="exam-card" onclick="window.location.href='ExamIntroServlet?courseId=9'">
+                    <div class="exam-card" onclick="window.location.href='${pageContext.request.contextPath}/takeExam?courseId=9&courseCode=CMP901'">
                         <div class="exam-img-container" style="color: #22d3ee;">
                             <i class="bi bi-cpu" style="font-size: 3.5rem;"></i>
                         </div>
                         <div class="p-4 flex-grow-1 d-flex flex-column">
-                            <h6 class="fw-bold mb-2">CompTIA Tech+</h6>
+                            <h6 class="fw-bold mb-2 text-white">CompTIA Tech+</h6>
                             <p style="color: var(--text-muted);" class="small mb-4 flex-grow-1">An entry-level certification validating foundational knowledge covering cloud storage concepts.</p>
                             <div class="d-flex justify-content-between align-items-center mt-auto">
-                                <span class="badge bg-dark border text-white small" style="border-color: var(--border-glass) !important;"><i class="bi bi-ui-checks-grid me-1"></i> Multiple Choice</span>
+                                <span class="badge bg-dark border text-white small" style="border-color: var(--border-glass) !important;"><i class="bi bi-ui-checks-grid me-1"></i> Short Answer</span>
                                 <span class="fw-semibold small" style="color: var(--accent-purple);">Start Exam <i class="bi bi-arrow-right"></i></span>
                             </div>
                         </div>
@@ -502,15 +533,15 @@
                 </div>
 
                 <div class="col-12 col-md-6 col-xl-4">
-                    <div class="exam-card" onclick="window.location.href='ExamIntroServlet?courseId=10'">
+                    <div class="exam-card" onclick="window.location.href='${pageContext.request.contextPath}/takeExam?courseId=10&courseCode=PBI101'">
                         <div class="exam-img-container" style="color: #facc15;">
                             <i class="bi bi-bar-chart-steps" style="font-size: 3.5rem;"></i>
                         </div>
                         <div class="p-4 flex-grow-1 d-flex flex-column">
-                            <h6 class="fw-bold mb-2">Microsoft Power BI Analyst</h6>
+                            <h6 class="fw-bold mb-2 text-white">Microsoft Power BI Analyst</h6>
                             <p style="color: var(--text-muted);" class="small mb-4 flex-grow-1">Learn to clean, transform, and map corporate metrics into readable value streams.</p>
                             <div class="d-flex justify-content-between align-items-center mt-auto">
-                                <span class="badge bg-dark border text-white small" style="border-color: var(--border-glass) !important;"><i class="bi bi-ui-checks-grid me-1"></i> Multiple Choice</span>
+                                <span class="badge bg-dark border text-white small" style="border-color: var(--border-glass) !important;"><i class="bi bi-ui-checks-grid me-1"></i> Short Answer</span>
                                 <span class="fw-semibold small" style="color: var(--accent-purple);">Start Exam <i class="bi bi-arrow-right"></i></span>
                             </div>
                         </div>
@@ -518,15 +549,15 @@
                 </div>
 
                 <div class="col-12 col-md-6 col-xl-4">
-                    <div class="exam-card" onclick="window.location.href='ExamIntroServlet?courseId=11'">
+                    <div class="exam-card" onclick="window.location.href='${pageContext.request.contextPath}/takeExam?courseId=11&courseCode=AZU111'">
                         <div class="exam-img-container" style="color: #6366f1;">
                             <i class="bi bi-cloud-arrow-up-fill" style="font-size: 3.5rem;"></i>
                         </div>
                         <div class="p-4 flex-grow-1 d-flex flex-column">
-                            <h6 class="fw-bold mb-2">Microsoft Azure Fundamentals</h6>
+                            <h6 class="fw-bold mb-2 text-white">Microsoft Azure Fundamentals</h6>
                             <p style="color: var(--text-muted);" class="small mb-4 flex-grow-1">Prove your foundational knowledge regarding core enterprise cloud platform components.</p>
                             <div class="d-flex justify-content-between align-items-center mt-auto">
-                                <span class="badge bg-dark border text-white small" style="border-color: var(--border-glass) !important;"><i class="bi bi-ui-checks-grid me-1"></i> Multiple Choice</span>
+                                <span class="badge bg-dark border text-white small" style="border-color: var(--border-glass) !important;"><i class="bi bi-ui-checks-grid me-1"></i> Short Answer</span>
                                 <span class="fw-semibold small" style="color: var(--accent-purple);">Start Exam <i class="bi bi-arrow-right"></i></span>
                             </div>
                         </div>
@@ -534,20 +565,21 @@
                 </div>
 
                 <div class="col-12 col-md-6 col-xl-4">
-                    <div class="exam-card" onclick="window.location.href='ExamIntroServlet?courseId=12'">
+                    <div class="exam-card" onclick="window.location.href='${pageContext.request.contextPath}/takeExam?courseId=12&courseCode=SQL121'">
                         <div class="exam-img-container" style="color: #a78bfa;">
                             <i class="bi bi-database-fill-gear" style="font-size: 3.5rem;"></i>
                         </div>
                         <div class="p-4 flex-grow-1 d-flex flex-column">
-                            <h6 class="fw-bold mb-2">SQL for Data Analysis</h6>
+                            <h6 class="fw-bold mb-2 text-white">SQL for Data Analysis</h6>
                             <p style="color: var(--text-muted);" class="small mb-4 flex-grow-1">Write optimized subqueries, execute aggregations, and query relational data nodes.</p>
                             <div class="d-flex justify-content-between align-items-center mt-auto">
-                                <span class="badge bg-dark border text-white small" style="border-color: var(--border-glass) !important;"><i class="bi bi-ui-checks-grid me-1"></i> Multiple Choice</span>
+                                <span class="badge bg-dark border text-white small" style="border-color: var(--border-glass) !important;"><i class="bi bi-ui-checks-grid me-1"></i> Short Answer</span>
                                 <span class="fw-semibold small" style="color: var(--accent-purple);">Start Exam <i class="bi bi-arrow-right"></i></span>
                             </div>
                         </div>
                     </div>
                 </div>
+
             </div>
         </section>
     </main>

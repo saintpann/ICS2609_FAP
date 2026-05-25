@@ -195,12 +195,19 @@
         </div>
         <nav class="nav flex-column">
             <a class="nav-link-custom" href="${pageContext.request.contextPath}/app/admin_dashboard.jsp"><i class="bi bi-sliders"></i> Control Center</a>
-            <a class="nav-link-custom active" href="#"><i class="bi bi-file-earmark-bar-graph-fill"></i> System Reports</a>
-            <hr class="mx-3 opacity-20" style="color: var(--text-body);">
-            <a class="nav-link-custom text-danger" href="logout"><i class="bi bi-box-arrow-left"></i> Sign Out</a>
+            
+            <a class="nav-link-custom text-dark fw-bold bg-light" href="${pageContext.request.contextPath}/app/reports.jsp"><i class="bi bi-file-earmark-bar-graph-fill text-primary"></i> System Reports</a>
+            
+            <a class="nav-link-custom" href="${pageContext.request.contextPath}/directory"><i class="bi bi-people-fill"></i> User Directory</a>
+            
+            <hr class="mx-3 text-muted">
+            
+            <a class="nav-link-custom" href="${pageContext.request.contextPath}/settings.jsp"><i class="bi bi-gear-fill"></i> Account Settings</a>
+            
+            <a class="nav-link-custom text-danger" href="${pageContext.request.contextPath}/logout"><i class="bi bi-box-arrow-left"></i> Sign Out</a>
         </nav>
     </aside>
-
+    
     <main class="main-content">
         <header class="mb-4">
             <h4 class="fw-bold m-0 text-white">Generate Performance Metrics</h4>
@@ -229,6 +236,43 @@
                     <i class="bi bi-lightning-charge-fill me-1"></i> Compile Query Logs
                 </button>
             </form>
+        </div>
+                <div class="card report-card mt-4">
+            <div class="d-flex align-items-center mb-3">
+                <i class="bi bi-people-fill fs-3 me-3" style="color: #2DD4BF;"></i>
+                <h5 class="fw-bold text-dark m-0">Master Directory Audit</h5>
+            </div>
+            <div class="card report-card mt-4">
+                <div class="d-flex align-items-center mb-3">
+                    <i class="bi bi-person-badge-fill fs-3 me-3" style="color: #EF4444;"></i>
+                    <h5 class="fw-bold text-dark m-0">Personal Account Record</h5>
+                </div>
+                <p class="text-muted small mb-4">
+                    Generates a landscape PDF containing only your personal administrator account details and system history.
+                </p>
+                <a href="${pageContext.request.contextPath}/generateReport?action=selfReport" class="btn w-100 py-2.5 rounded-3 fw-bold shadow-sm" style="background-color: #EF4444; color: #fff; border: none;">
+                    <i class="bi bi-file-earmark-pdf-fill me-1"></i> Download My Record
+                </a>
+            </div>
+            <p class="text-muted small mb-4">
+                Generates a complete landscape PDF of all system accounts, decoded passwords, and complete certification histories. 
+                <span class="text-danger fw-bold d-block mt-1">Highly Confidential. Handled with explicit administrative clearance only.</span>
+            </p>
+            <a href="${pageContext.request.contextPath}/generateReport?action=allUsers" class="btn w-100 py-2.5 rounded-3 fw-bold shadow-sm" style="background-color: #2DD4BF; color: #fff; border: none;">
+                <i class="bi bi-file-earmark-pdf-fill me-1"></i> Download Master Report
+            </a>
+        </div>
+        <div class="card report-card mt-4 mb-5">
+            <div class="d-flex align-items-center mb-3">
+                <i class="bi bi-award-fill fs-3 me-3" style="color: #F59E0B;"></i>
+                <h5 class="fw-bold text-dark m-0">Batch Certificate Export</h5>
+            </div>
+            <p class="text-muted small mb-4">
+                Executes a system-wide query to generate official printable certificate cards for every passed exam in the database.
+            </p>
+            <a href="${pageContext.request.contextPath}/generateReport?action=printCertificates" class="btn w-100 py-2.5 rounded-3 fw-bold shadow-sm" style="background-color: #F59E0B; color: #fff; border: none;">
+                <i class="bi bi-printer-fill me-1"></i> Run Batch Print
+            </a>
         </div>
     </main>
 </body>

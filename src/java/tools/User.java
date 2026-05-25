@@ -2,11 +2,12 @@ package tools;
 
 public class User {
     private String username;
-    private String role; // Added
+    private String role; 
+    private String password; // Added for the report engine
     
     public User() {}
 
-    // Updated Constructor to accept ALL fields
+    // Updated Constructor
     public User(String username, String role) {
         this.username = username;
         this.role = role;
@@ -18,4 +19,7 @@ public class User {
     
     public String getRole() { return role; }
     public void setRole(String role) { this.role = role; }
+    
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
 }
