@@ -38,7 +38,7 @@
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
 
-        .sidebar { background-color: var(--sidebar-bg); border-right: 1px solid var(--border-glass); min-height: 100vh; position: fixed; top: 0; left: 0; width: 260px; padding-top: 1.75rem; z-index: 100; }
+        .sidebar { background-color: var(--sidebar-bg); border-right: 1px solid var(--border-glass); min-height: 100vh; position: fixed; top: 0; left: 0; width: 260px; padding-top: 1.75rem; z-index: 100; transition: transform 0.3s ease; }
         .main-content { margin-left: 260px; padding: 2.5rem; position: relative; z-index: 2; }
         
         .nav-link-custom { display: flex; align-items: center; padding: 0.8rem 1.25rem; color: var(--text-muted); text-decoration: none; border-radius: 12px; margin: 0.25rem 1.25rem; font-weight: 500; font-size: 0.95rem; transition: all 0.2s ease; border: 1px solid transparent; }
@@ -50,7 +50,7 @@
 
         .bento-card { background: var(--card-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid var(--border-glass); border-top: 1px solid var(--border-glass-top); border-radius: 20px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); padding: 2.25rem; }
         
-        .btn-action-panel { background-color: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-glass); border-radius: 8px; padding: 0.4rem 0.75rem; font-size: 0.85rem; font-weight: 600; color: #cbd5e1; transition: all 0.2s ease; }
+        .btn-action-panel { background-color: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-glass); border-radius: 8px; padding: 0.4rem 0.75rem; font-size: 0.85rem; font-weight: 600; color: #cbd5e1; transition: all 0.2s ease; text-decoration: none; }
         .btn-action-panel:hover { background-color: rgba(255, 255, 255, 0.1); color: #fff; }
 
         /* Transparent Dark Table */
@@ -66,14 +66,56 @@
         /* Modal Customization */
         .modal-content { background-color: #1a103c; border: 1px solid var(--border-glass-top); box-shadow: 0 20px 40px rgba(0,0,0,0.8); }
         .modal-header, .modal-footer { border-color: var(--border-glass); }
+
+        /* Responsive Mobile Layouts */
+        .mobile-header-bar {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; height: 70px;
+            background-color: var(--sidebar-bg);
+            border-bottom: 1px solid var(--border-glass);
+            z-index: 1030;
+            padding: 0 1.5rem;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .btn-hamburger-toggle {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-glass);
+            color: #ffffff;
+            border-radius: 8px;
+            padding: 0.4rem 0.75rem;
+            font-size: 1.25rem;
+        }
+
+        @media (max-width: 991.98px) {
+            .mobile-header-bar { display: flex; }
+            .sidebar { transform: translateX(-100%); width: 280px; z-index: 1050; }
+            .sidebar.drawer-active { transform: translateX(0); }
+            .main-content { margin-left: 0; padding: 6.5rem 1.25rem 2.5rem 1.25rem; }
+        }
     </style>
 </head>
 <body>
 
-    <aside class="sidebar">
-        <div class="px-4 mb-4 d-flex align-items-center">
-            <i class="bi bi-shield-lock-fill fs-3 me-2" style="color: #8B5CF6;"></i>
-            <span class="fw-bold fs-5 text-white">EduPortal Admin</span>
+    <div class="mobile-header-bar">
+        <div class="d-flex align-items-center">
+            <i class="bi bi-shield-lock-fill fs-4 me-2" style="color: #8B5CF6;"></i>
+            <span class="fw-bold text-white">EduPortal Admin</span>
+        </div>
+        <button class="btn btn-hamburger-toggle" type="button" onclick="handleSidebarDisplayToggle('toggle')">
+            <i class="bi bi-list"></i>
+        </button>
+    </div>
+
+    <aside class="sidebar" id="globalAppSidebarContainer">
+        <div class="px-4 mb-4 d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-shield-lock-fill fs-3 me-2" style="color: #8B5CF6;"></i>
+                <span class="fw-bold fs-5 text-white">EduPortal Admin</span>
+            </div>
+            <button type="button" class="btn-close btn-close-white d-lg-none" onclick="handleSidebarDisplayToggle(false)"></button>
         </div>
         <nav class="nav flex-column">
             <a class="nav-link-custom" href="${pageContext.request.contextPath}/app/admin_dashboard.jsp"><i class="bi bi-sliders"></i> Control Center</a>
@@ -86,7 +128,7 @@
     </aside>
 
     <main class="main-content">
-        <div class="d-flex justify-content-between align-items-end mb-4">
+        <div class="d-flex justify-content-between align-items-end mb-4 flex-wrap gap-3">
             <header>
                 <h4 class="fw-bold m-0">User Directory</h4>
                 <p class="text-muted small m-0">Create, edit, or remove system accounts.</p>
@@ -130,56 +172,6 @@
                                     <button class="btn-action-panel text-danger border-danger border-opacity-50" data-bs-toggle="modal" data-bs-target="#deleteModal<%= u.getUsername() %>"><i class="bi bi-trash3-fill"></i></button>
                                 </td>
                             </tr>
-
-                            <div class="modal fade" id="editRoleModal<%= u.getUsername() %>" tabindex="-1">
-                                <div class="modal-dialog modal-dialog-centered"><div class="modal-content">
-                                    <form action="${pageContext.request.contextPath}/adminAction" method="POST">
-                                        <input type="hidden" name="action" value="editRole">
-                                        <input type="hidden" name="targetUser" value="<%= u.getUsername() %>">
-                                        <div class="modal-header"><h5 class="modal-title fw-bold">Edit Role: <%= u.getUsername() %></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-                                        <div class="modal-body">
-                                            <label class="form-label small fw-semibold">Select System Role</label>
-                                            <select name="role" class="form-select p-2.5 rounded-3">
-                                                <option value="student" <%= "student".equalsIgnoreCase(u.getRole()) ? "selected" : "" %>>Student</option>
-                                                <option value="admin" <%= "admin".equalsIgnoreCase(u.getRole()) ? "selected" : "" %>>Admin</option>
-                                            </select>
-                                        </div>
-                                        <div class="modal-footer"><button type="submit" class="btn fw-bold py-2 w-100" style="background-color: var(--accent-purple); color: white;">Save Changes</button></div>
-                                    </form>
-                                </div></div>
-                            </div>
-
-                            <div class="modal fade" id="resetPassModal<%= u.getUsername() %>" tabindex="-1">
-                                <div class="modal-dialog modal-dialog-centered"><div class="modal-content">
-                                    <form action="${pageContext.request.contextPath}/adminAction" method="POST">
-                                        <input type="hidden" name="action" value="resetPassword">
-                                        <input type="hidden" name="targetUser" value="<%= u.getUsername() %>">
-                                        <div class="modal-header"><h5 class="modal-title fw-bold">Reset Password: <%= u.getUsername() %></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-                                        <div class="modal-body">
-                                            <label class="form-label small fw-semibold">New Password</label>
-                                            <input type="text" name="newPassword" class="form-control p-2.5 rounded-3" required placeholder="Type new password...">
-                                        </div>
-                                        <div class="modal-footer"><button type="submit" class="btn btn-warning text-dark fw-bold py-2 w-100">Force Reset Password</button></div>
-                                    </form>
-                                </div></div>
-                            </div>
-
-                            <div class="modal fade" id="deleteModal<%= u.getUsername() %>" tabindex="-1">
-                                <div class="modal-dialog modal-dialog-centered"><div class="modal-content border-danger border-opacity-50">
-                                    <form action="${pageContext.request.contextPath}/adminAction" method="POST">
-                                        <input type="hidden" name="action" value="delete">
-                                        <input type="hidden" name="targetUser" value="<%= u.getUsername() %>">
-                                        <div class="modal-header border-0"><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-                                        <div class="modal-body text-center pb-4">
-                                            <i class="bi bi-exclamation-circle-fill text-danger mb-3 d-block" style="font-size: 3.5rem;"></i>
-                                            <h5 class="fw-bold">Delete <%= u.getUsername() %>?</h5>
-                                            <p class="text-muted small px-3">This will permanently purge this identity and all earned certificates from the databases.</p>
-                                            <button type="submit" class="btn btn-danger fw-bold w-100 py-2.5 rounded-3 mt-2">Yes, Permanently Delete</button>
-                                        </div>
-                                    </form>
-                                </div></div>
-                            </div>
-
                         <% }} %>
                     </tbody>
                 </table>
@@ -187,11 +179,77 @@
         </div>
     </main>
 
+    <% if (userList != null) { for (User u : userList) { %>
+        <div class="modal fade" id="editRoleModal<%= u.getUsername() %>" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+                <form action="${pageContext.request.contextPath}/adminAction" method="POST">
+                    <input type="hidden" name="action" value="editRole">
+                    <input type="hidden" name="targetUser" value="<%= u.getUsername() %>">
+                    <div class="modal-header">
+                        <h5 class="modal-title fw-bold">Edit Role: <%= u.getUsername() %></h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <label class="form-label small fw-semibold">Select System Role</label>
+                        <select name="role" class="form-select p-2.5 rounded-3">
+                            <option value="student" <%= "student".equalsIgnoreCase(u.getRole()) ? "selected" : "" %>>Student</option>
+                            <option value="admin" <%= "admin".equalsIgnoreCase(u.getRole()) ? "selected" : "" %>>Admin</option>
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn fw-bold py-2 w-100" style="background-color: var(--accent-purple); color: white;">Save Changes</button>
+                    </div>
+                </form>
+            </div></div>
+        </div>
+
+        <div class="modal fade" id="resetPassModal<%= u.getUsername() %>" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+                <form action="${pageContext.request.contextPath}/adminAction" method="POST">
+                    <input type="hidden" name="action" value="resetPassword">
+                    <input type="hidden" name="targetUser" value="<%= u.getUsername() %>">
+                    <div class="modal-header">
+                        <h5 class="modal-title fw-bold">Reset Password: <%= u.getUsername() %></h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <label class="form-label small fw-semibold">New Password</label>
+                        <input type="text" name="newPassword" class="form-control p-2.5 rounded-3" required placeholder="Type new password...">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-warning text-dark fw-bold py-2 w-100">Force Reset Password</button>
+                    </div>
+                </form>
+            </div></div>
+        </div>
+
+        <div class="modal fade" id="deleteModal<%= u.getUsername() %>" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered"><div class="modal-content border-danger border-opacity-50">
+                <form action="${pageContext.request.contextPath}/adminAction" method="POST">
+                    <input type="hidden" name="action" value="delete">
+                    <input type="hidden" name="targetUser" value="<%= u.getUsername() %>">
+                    <div class="modal-header border-0">
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body text-center pb-4">
+                        <i class="bi bi-exclamation-circle-fill text-danger mb-3 d-block" style="font-size: 3.5rem;"></i>
+                        <h5 class="fw-bold">Delete <%= u.getUsername() %>?</h5>
+                        <p class="text-muted small px-3">This will permanently purge this identity and all earned certificates from the databases.</p>
+                        <button type="submit" class="btn btn-danger fw-bold w-100 py-2.5 rounded-3 mt-2">Yes, Permanently Delete</button>
+                    </div>
+                </form>
+            </div></div>
+        </div>
+    <% }} %>
+
     <div class="modal fade" id="addUserModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered"><div class="modal-content">
             <form action="${pageContext.request.contextPath}/adminAction" method="POST">
                 <input type="hidden" name="action" value="add">
-                <div class="modal-header"><h5 class="modal-title fw-bold">Create New Account</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">Create New Account</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label small fw-semibold text-light">Username</label>
@@ -209,11 +267,31 @@
                         </select>
                     </div>
                 </div>
-                <div class="modal-footer"><button type="submit" class="btn fw-bold w-100 py-2.5 rounded-3" style="background-color: var(--accent-purple); color: white;">Provision Account</button></div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn fw-bold w-100 py-2.5 rounded-3" style="background-color: var(--accent-purple); color: white;">Provision Account</button>
+                </div>
             </form>
         </div></div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function handleSidebarDisplayToggle(actionState) {
+            const sidebar = document.getElementById('globalAppSidebarContainer');
+            if (!sidebar) return;
+            
+            if (actionState === 'toggle') {
+                if (sidebar.classList.contains('drawer-active')) {
+                    sidebar.classList.remove('drawer-active');
+                } else {
+                    sidebar.classList.add('drawer-active');
+                }
+            } else if (actionState === true) {
+                sidebar.classList.add('drawer-active');
+            } else {
+                sidebar.classList.remove('drawer-active');
+            }
+        }
+    </script>
 </body>
 </html>
