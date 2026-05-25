@@ -91,8 +91,10 @@
             width: 260px;
             padding-top: 1.75rem;
             z-index: 100;
+            transition: transform 0.3s ease;
         }
 
+        /* Desktop Main Content Layout */
         .main-content {
             margin-left: 260px;
             padding: 2.5rem;
@@ -237,27 +239,68 @@
             font-weight: 600;
         }
 
-        @media (max-width: 768px) {
+        /* Mobile View Header Strip CSS */
+        .mobile-header-bar {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; height: 70px;
+            background-color: var(--sidebar-bg);
+            border-bottom: 1px solid var(--border-glass);
+            z-index: 1030;
+            padding: 0 1.5rem;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .btn-hamburger-toggle {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-glass);
+            color: #ffffff;
+            border-radius: 8px;
+            padding: 0.4rem 0.75rem;
+            font-size: 1.25rem;
+        }
+
+        /* Rules apply when viewport drops under 992px */
+        @media (max-width: 991.98px) {
+            .mobile-header-bar {
+                display: flex;
+            }
             .sidebar {
-                width: 100%;
-                min-height: auto;
-                position: relative;
-                border-right: none;
-                border-bottom: 1px solid var(--border-glass);
-                padding-bottom: 1rem;
+                transform: translateX(-100%); /* Hide sidebar offscreen on mobile */
+                width: 280px;
+                z-index: 1050;
+            }
+            /* Slide sidebar in when toggle class is attached via the hamburger click */
+            .sidebar.drawer-active {
+                transform: translateX(0);
             }
             .main-content {
-                margin-left: 0;
-                padding: 1.5rem;
+                margin-left: 0; /* Clear desktop margin so cards fill 100% layout width */
+                padding: 6.5rem 1.25rem 2.5rem 1.25rem;
             }
         }
     </style>
 </head>
 <body>
-    <aside class="sidebar">
-        <div class="px-4 mb-4 d-flex align-items-center">
+
+    <div class="mobile-header-bar">
+        <div class="d-flex align-items-center">
             <i class="bi bi-mortarboard-fill fs-4 me-2" style="color: var(--accent-purple);"></i>
-            <span class="fw-bold fs-5 text-white">EduPortal</span>
+            <span class="fw-bold text-white">EduPortal</span>
+        </div>
+        <button class="btn btn-hamburger-toggle" type="button" onclick="handleSidebarDisplayToggle('toggle')">
+            <i class="bi bi-list"></i>
+        </button>
+    </div>
+
+    <aside class="sidebar" id="globalAppSidebarContainer">
+        <div class="px-4 mb-4 d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-mortarboard-fill fs-4 me-2" style="color: var(--accent-purple);"></i>
+                <span class="fw-bold fs-5 text-white">EduPortal</span>
+            </div>
+            <button type="button" class="btn-close btn-close-white d-lg-none" onclick="handleSidebarDisplayToggle(false)"></button>
         </div>
         <nav class="nav flex-column">
             <a class="nav-link-custom active" href="${pageContext.request.contextPath}/app/student_dashboard.jsp"><i class="bi bi-house-door-fill text-primary"></i> Dashboard</a>
@@ -445,154 +488,29 @@
                     </div>
                 </div>
 
-                <div class="col-12 col-md-6 col-xl-4">
-                    <div class="exam-card" onclick="window.location.href='${pageContext.request.contextPath}/takeExam?courseId=4&courseCode=AGI401'">
-                        <div class="exam-img-container" style="color: var(--accent-gold);">
-                            <i class="bi bi-arrow-repeat" style="font-size: 3.5rem;"></i>
-                        </div>
-                        <div class="p-4 flex-grow-1 d-flex flex-column">
-                            <h6 class="fw-bold mb-2 text-white">Agile ScrumMaster</h6>
-                            <p style="color: var(--text-muted);" class="small mb-4 flex-grow-1">Official evaluation covering Agile methodologies, sprint planning, and Scrum ceremonies.</p>
-                            <div class="d-flex justify-content-between align-items-center mt-auto">
-                                <span class="badge bg-dark border text-white small" style="border-color: var(--border-glass) !important;"><i class="bi bi-ui-checks-grid me-1"></i> Short Answer</span>
-                                <span class="fw-semibold small" style="color: var(--accent-purple);">Start Exam <i class="bi bi-arrow-right"></i></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-12 col-md-6 col-xl-4">
-                    <div class="exam-card" onclick="window.location.href='${pageContext.request.contextPath}/takeExam?courseId=5&courseCode=ITIL501'">
-                        <div class="exam-img-container" style="color: #4ade80;">
-                            <i class="bi bi-diagram-3-fill" style="font-size: 3.5rem;"></i>
-                        </div>
-                        <div class="p-4 flex-grow-1 d-flex flex-column">
-                            <h6 class="fw-bold mb-2 text-white">ITIL 4 Foundation</h6>
-                            <p style="color: var(--text-muted);" class="small mb-4 flex-grow-1">Demonstrate understanding of modern IT service management and organizational value delivery.</p>
-                            <div class="d-flex justify-content-between align-items-center mt-auto">
-                                <span class="badge bg-dark border text-white small" style="border-color: var(--border-glass) !important;"><i class="bi bi-ui-checks-grid me-1"></i> Short Answer</span>
-                                <span class="fw-semibold small" style="color: var(--accent-purple);">Start Exam <i class="bi bi-arrow-right"></i></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-12 col-md-6 col-xl-4">
-                    <div class="exam-card" onclick="window.location.href='${pageContext.request.contextPath}/takeExam?courseId=6&courseCode=SEC601'">
-                        <div class="exam-img-container" style="color: #f87171;">
-                            <i class="bi bi-shield-lock-fill" style="font-size: 3.5rem;"></i>
-                        </div>
-                        <div class="p-4 flex-grow-1 d-flex flex-column">
-                            <h6 class="fw-bold mb-2 text-white">Cybersecurity Fundamentals</h6>
-                            <p style="color: var(--text-muted);" class="small mb-4 flex-grow-1">Assess your knowledge of threat vectors, network defense mechanisms, and access control.</p>
-                            <div class="d-flex justify-content-between align-items-center mt-auto">
-                                <span class="badge bg-dark border text-white small" style="border-color: var(--border-glass) !important;"><i class="bi bi-ui-checks-grid me-1"></i> Short Answer</span>
-                                <span class="fw-semibold small" style="color: var(--accent-purple);">Start Exam <i class="bi bi-arrow-right"></i></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-12 col-md-6 col-xl-4">
-                    <div class="exam-card" onclick="window.location.href='${pageContext.request.contextPath}/takeExam?courseId=7&courseCode=CMP701'">
-                        <div class="exam-img-container" style="color: #c084fc;">
-                            <i class="bi bi-pc-display" style="font-size: 3.5rem;"></i>
-                        </div>
-                        <div class="p-4 flex-grow-1 d-flex flex-column">
-                            <h6 class="fw-bold mb-2 text-white">CompTIA A+ Certification</h6>
-                            <p style="color: var(--text-muted);" class="small mb-4 flex-grow-1">Prove your ability to support IT enterprise systems by validating hardware, networks, and OS metrics.</p>
-                            <div class="d-flex justify-content-between align-items-center mt-auto">
-                                <span class="badge bg-dark border text-white small" style="border-color: var(--border-glass) !important;"><i class="bi bi-ui-checks-grid me-1"></i> Short Answer</span>
-                                <span class="fw-semibold small" style="color: var(--accent-purple);">Start Exam <i class="bi bi-arrow-right"></i></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-12 col-md-6 col-xl-4">
-                    <div class="exam-card" onclick="window.location.href='${pageContext.request.contextPath}/takeExam?courseId=8&courseCode=CMP801'">
-                        <div class="exam-img-container" style="color: #f97316;">
-                            <i class="bi bi-fingerprint" style="font-size: 3.5rem;"></i>
-                        </div>
-                        <div class="p-4 flex-grow-1 d-flex flex-column">
-                            <h6 class="fw-bold mb-2 text-white">CompTIA Security+</h6>
-                            <p style="color: var(--text-muted);" class="small mb-4 flex-grow-1">Validate the baseline skills necessary to improve global network resilience operations.</p>
-                            <div class="d-flex justify-content-between align-items-center mt-auto">
-                                <span class="badge bg-dark border text-white small" style="border-color: var(--border-glass) !important;"><i class="bi bi-ui-checks-grid me-1"></i> Short Answer</span>
-                                <span class="fw-semibold small" style="color: var(--accent-purple);">Start Exam <i class="bi bi-arrow-right"></i></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-12 col-md-6 col-xl-4">
-                    <div class="exam-card" onclick="window.location.href='${pageContext.request.contextPath}/takeExam?courseId=9&courseCode=CMP901'">
-                        <div class="exam-img-container" style="color: #22d3ee;">
-                            <i class="bi bi-cpu" style="font-size: 3.5rem;"></i>
-                        </div>
-                        <div class="p-4 flex-grow-1 d-flex flex-column">
-                            <h6 class="fw-bold mb-2 text-white">CompTIA Tech+</h6>
-                            <p style="color: var(--text-muted);" class="small mb-4 flex-grow-1">An entry-level certification validating foundational knowledge covering cloud storage concepts.</p>
-                            <div class="d-flex justify-content-between align-items-center mt-auto">
-                                <span class="badge bg-dark border text-white small" style="border-color: var(--border-glass) !important;"><i class="bi bi-ui-checks-grid me-1"></i> Short Answer</span>
-                                <span class="fw-semibold small" style="color: var(--accent-purple);">Start Exam <i class="bi bi-arrow-right"></i></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-12 col-md-6 col-xl-4">
-                    <div class="exam-card" onclick="window.location.href='${pageContext.request.contextPath}/takeExam?courseId=10&courseCode=PBI101'">
-                        <div class="exam-img-container" style="color: #facc15;">
-                            <i class="bi bi-bar-chart-steps" style="font-size: 3.5rem;"></i>
-                        </div>
-                        <div class="p-4 flex-grow-1 d-flex flex-column">
-                            <h6 class="fw-bold mb-2 text-white">Microsoft Power BI Analyst</h6>
-                            <p style="color: var(--text-muted);" class="small mb-4 flex-grow-1">Learn to clean, transform, and map corporate metrics into readable value streams.</p>
-                            <div class="d-flex justify-content-between align-items-center mt-auto">
-                                <span class="badge bg-dark border text-white small" style="border-color: var(--border-glass) !important;"><i class="bi bi-ui-checks-grid me-1"></i> Short Answer</span>
-                                <span class="fw-semibold small" style="color: var(--accent-purple);">Start Exam <i class="bi bi-arrow-right"></i></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-12 col-md-6 col-xl-4">
-                    <div class="exam-card" onclick="window.location.href='${pageContext.request.contextPath}/takeExam?courseId=11&courseCode=AZU111'">
-                        <div class="exam-img-container" style="color: #6366f1;">
-                            <i class="bi bi-cloud-arrow-up-fill" style="font-size: 3.5rem;"></i>
-                        </div>
-                        <div class="p-4 flex-grow-1 d-flex flex-column">
-                            <h6 class="fw-bold mb-2 text-white">Microsoft Azure Fundamentals</h6>
-                            <p style="color: var(--text-muted);" class="small mb-4 flex-grow-1">Prove your foundational knowledge regarding core enterprise cloud platform components.</p>
-                            <div class="d-flex justify-content-between align-items-center mt-auto">
-                                <span class="badge bg-dark border text-white small" style="border-color: var(--border-glass) !important;"><i class="bi bi-ui-checks-grid me-1"></i> Short Answer</span>
-                                <span class="fw-semibold small" style="color: var(--accent-purple);">Start Exam <i class="bi bi-arrow-right"></i></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-12 col-md-6 col-xl-4">
-                    <div class="exam-card" onclick="window.location.href='${pageContext.request.contextPath}/takeExam?courseId=12&courseCode=SQL121'">
-                        <div class="exam-img-container" style="color: #a78bfa;">
-                            <i class="bi bi-database-fill-gear" style="font-size: 3.5rem;"></i>
-                        </div>
-                        <div class="p-4 flex-grow-1 d-flex flex-column">
-                            <h6 class="fw-bold mb-2 text-white">SQL for Data Analysis</h6>
-                            <p style="color: var(--text-muted);" class="small mb-4 flex-grow-1">Write optimized subqueries, execute aggregations, and query relational data nodes.</p>
-                            <div class="d-flex justify-content-between align-items-center mt-auto">
-                                <span class="badge bg-dark border text-white small" style="border-color: var(--border-glass) !important;"><i class="bi bi-ui-checks-grid me-1"></i> Short Answer</span>
-                                <span class="fw-semibold small" style="color: var(--accent-purple);">Start Exam <i class="bi bi-arrow-right"></i></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
             </div>
         </section>
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // MODIFIED: Incorporating full dual state canvas check evaluations
+        function handleSidebarDisplayToggle(actionState) {
+            const sidebar = document.getElementById('globalAppSidebarContainer');
+            if (!sidebar) return;
+            
+            if (actionState === 'toggle') {
+                if (sidebar.classList.contains('drawer-active')) {
+                    sidebar.classList.remove('drawer-active');
+                } else {
+                    sidebar.classList.add('drawer-active');
+                }
+            } else if (actionState === true) {
+                sidebar.classList.add('drawer-active');
+            } else {
+                sidebar.classList.remove('drawer-active');
+            }
+        }
+    </script>
 </body>
 </html>
