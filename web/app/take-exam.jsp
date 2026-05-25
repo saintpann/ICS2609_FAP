@@ -6,62 +6,116 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Examination Interface</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     
     <style>
+        :root {
+            /* NexaFlow Premium Deep Matte Testing Canvas */
+            --bg-gradient: radial-gradient(circle at 50% 0%, #130a2a 0%, #04020a 100%);
+            --header-bg: #090612;
+            --card-bg: rgba(20, 15, 34, 0.7);
+            
+            /* UI States & Accents */
+            --accent-purple: #8B5CF6;
+            --accent-teal: #2DD4BF;
+            --border-glass: rgba(255, 255, 255, 0.06);
+            --border-glass-top: rgba(255, 255, 255, 0.15);
+
+            /* High Contrast Accessible Text */
+            --text-heading: #ffffff;
+            --text-body: #f1f5f9;
+            --text-muted: #94a3b8;
+        }
+
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #f8f9fa;
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            color: var(--text-body);
             min-height: 100vh;
-            padding-top: 90px;
-            user-select: none; /* Prevents copy-pasting during exam */
+            padding-top: 105px;
+            margin: 0;
+            position: relative;
+            user-select: none; /* Anti-cheat text protection mapping */
+            -webkit-user-select: none;
+        }
+
+        /* Subtle Noise Overlay texture layer */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.03;
+            z-index: 1;
+            pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
         }
         
+        /* Fixed Isolation Header (Zero distraction mapping strategy) */
         .exam-header {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
-            height: 75px;
-            background-color: #ffffff;
-            border-bottom: 1px solid #e2e8f0;
+            height: 80px;
+            background-color: var(--header-bg);
+            border-bottom: 1px solid var(--border-glass);
             z-index: 1030;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 2rem;
+            padding: 0 2.5rem;
         }
 
+        h5, h6 {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            letter-spacing: -0.01em;
+            color: var(--text-heading);
+        }
+
+        /* Question Cards Architecture */
         .question-card {
-            background: #ffffff;
-            border: none;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-glass);
+            border-top: 1px solid var(--border-glass-top);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
             padding: 2.5rem;
             margin-bottom: 1.5rem;
             min-height: 380px;
         }
 
-        /* Custom Interactive Choice Option Rows */
+        /* High-Visibility Custom Interactive Choice Rows */
         .option-container {
             display: flex;
             align-items: center;
             position: relative;
-            padding: 1.1rem 1.1rem 1.1rem 3.5rem;
-            margin-bottom: 0.85rem;
+            padding: 1.2rem 1.2rem 1.2rem 3.8rem;
+            margin-bottom: 0.95rem;
             cursor: pointer;
-            background-color: #ffffff;
-            border: 1px solid #e2e8f0;
+            background-color: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-glass);
             border-radius: 14px;
             font-weight: 500;
-            color: #334155;
-            transition: all 0.15s ease;
+            color: var(--text-body);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .option-container:hover {
-            background-color: #f8fafc;
-            border-color: #cbd5e1;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-color: rgba(139, 92, 246, 0.4);
+            transform: scale(1.005);
         }
 
         .option-container input {
@@ -73,27 +127,28 @@
         .checkmark {
             position: absolute;
             top: 50%;
-            left: 1.35rem;
+            left: 1.5rem;
             transform: translateY(-50%);
             height: 22px;
             width: 22px;
-            background-color: #fff;
-            border: 2px solid #cbd5e1;
+            background-color: rgba(0, 0, 0, 0.4);
+            border: 2px solid rgba(255, 255, 255, 0.2);
             border-radius: 50%;
-            transition: all 0.15s ease;
+            transition: all 0.2s ease;
         }
 
-        /* Dynamic Checked Active UI Classes */
+        /* Dynamic Active Selection Overrides (Success Teal & Soft Purple Fusion) */
         .option-container.active-selected {
-            border-color: #8B5CF6;
-            background-color: #f9f5ff;
-            color: #5b21b6;
+            border-color: var(--accent-teal);
+            background-color: rgba(45, 212, 191, 0.08);
+            color: #ffffff;
             font-weight: 600;
+            box-shadow: 0 0 15px rgba(45, 212, 191, 0.1);
         }
 
         .option-container.active-selected .checkmark {
-            border-color: #8B5CF6;
-            background-color: #8B5CF6;
+            border-color: var(--accent-teal);
+            background-color: var(--accent-teal);
         }
 
         .option-container.active-selected .checkmark::after {
@@ -104,48 +159,77 @@
             width: 8px;
             height: 8px;
             border-radius: 50%;
-            background: white;
+            background: #000000;
         }
 
-        /* Question Sidebar Selection Grid Box */
+        /* Sidebar Navigation Component Grid Boxes */
+        .sidebar-nav-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-glass);
+            border-top: 1px solid var(--border-glass-top);
+        }
+
         .nav-grid-box {
             width: 44px;
             height: 44px;
-            border-radius: 10px;
-            border: 1px solid #e2e8f0;
-            background-color: #ffffff;
+            border-radius: 12px;
+            border: 1px solid var(--border-glass);
+            background-color: rgba(0, 0, 0, 0.3);
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 600;
-            font-size: 0.9rem;
-            color: #64748b;
+            font-size: 0.95rem;
+            color: var(--text-muted);
             cursor: pointer;
             transition: all 0.2s ease;
             text-decoration: none;
         }
 
         .nav-grid-box:hover {
-            border-color: #8B5CF6;
-            color: #8B5CF6;
-            background-color: #f9f5ff;
+            border-color: var(--accent-purple);
+            color: #ffffff;
+            background-color: rgba(139, 92, 246, 0.2);
         }
 
         .nav-grid-box.current {
-            border-color: #8B5CF6;
-            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.25);
-            color: #8B5CF6;
-            background-color: #f9f5ff;
+            border-color: var(--accent-purple);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.3);
+            color: #ffffff;
+            background-color: rgba(139, 92, 246, 0.25);
         }
 
         .nav-grid-box.answered {
-            background-color: #8B5CF6;
-            border-color: #8B5CF6;
+            background-color: rgba(139, 92, 246, 0.4);
+            border-color: var(--accent-purple);
             color: #ffffff;
         }
         
         .nav-grid-box.answered.current {
-            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.4);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.5);
+            background-color: var(--accent-purple);
+        }
+
+        /* Utility Interface Core Actions Elements buttons mapping */
+        .btn-nav-control {
+            border: 1px solid var(--border-glass);
+            background-color: rgba(255, 255, 255, 0.02);
+            color: var(--text-body);
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        .btn-nav-control:hover:not(:disabled) {
+            background-color: rgba(255, 255, 255, 0.08);
+            color: #ffffff;
+            border-color: var(--text-muted);
+        }
+
+        .badge-midterm {
+            background-color: rgba(239, 68, 68, 0.15) !important;
+            color: #fca5a5 !important;
+            border: 1px solid rgba(239, 68, 68, 0.3);
         }
     </style>
 </head>
@@ -153,53 +237,53 @@
 
     <header class="exam-header shadow-sm">
         <div class="d-flex align-items-center">
-            <span class="badge bg-danger-subtle text-danger fw-bold me-3 px-3 py-2 text-uppercase">Midterm Exam</span>
-            <h5 class="fw-bold m-0 text-dark">ICS2609: Advanced Database Systems</h5>
+            <span class="badge badge-midterm fw-bold me-3 px-3 py-2 text-uppercase">Midterm Exam</span>
+            <h5 class="fw-bold m-0 text-white">ICS2609: Advanced Database Systems</h5>
         </div>
-        <div class="d-flex align-items-center bg-dark text-white px-3 py-2 rounded-3">
+        <div class="d-flex align-items-center bg-black border px-3 py-2 rounded-3" style="border-color: var(--border-glass) !important;">
             <i class="bi bi-clock-fill text-warning me-2"></i>
-            <span class="fw-bold" id="timerDisplay">01:30:00</span>
+            <span class="fw-bold text-white" id="timerDisplay" style="font-variant-numeric: tabular-nums;">01:30:00</span>
         </div>
     </header>
 
-    <div class="container main-container mt-4">
+    <div class="container main-container">
         <div class="row g-4">
             
             <main class="col-12 col-lg-8">
                 <div class="card question-card">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <span class="text-muted small fw-bold text-uppercase" id="questionProgressText">Question 1 of 4</span>
-                        <span class="badge bg-light text-muted border" id="questionPoints">Points: 2.0</span>
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <span style="color: var(--text-muted);" class="small fw-bold text-uppercase" id="questionProgressText">Question 1 of 4</span>
+                        <span class="badge bg-dark text-white border" id="questionPoints" style="border-color: var(--border-glass) !important;">Points: 2.0</span>
                     </div>
                     
-                    <h5 class="fw-bold text-dark mb-4" id="questionTitleText">Loading Question Prompt...</h5>
+                    <h5 class="fw-bold text-white mb-4 lh-base" id="questionTitleText">Loading Question Prompt...</h5>
                     
-                    <div id="choicesBlockContainer">
-                        </div>
+                    <div id="choicesBlockContainer"></div>
                 </div>
 
                 <div class="d-flex justify-content-between align-items-center mt-3 mb-5">
-                    <button type="button" class="btn btn-outline-secondary px-4 py-2 rounded-3 fw-semibold" id="prevBtn" onclick="navigateQuestion(-1)">
+                    <button type="button" class="btn btn-nav-control px-4 py-2 rounded-3" id="prevBtn" onclick="navigateQuestion(-1)">
                         <i class="bi bi-arrow-left me-2"></i> Previous
                     </button>
-                    <button type="button" class="btn btn-primary px-4 py-2 rounded-3 fw-semibold" id="nextBtn" style="background-color: #8B5CF6; border-color: #8B5CF6;" onclick="navigateQuestion(1)">
+                    <button type="button" class="btn text-white px-4 py-2 rounded-3 fw-semibold" id="nextBtn" style="background-color: var(--accent-purple); box-shadow: 0 4px 12px rgba(139, 92, 246, 0.2);" onclick="navigateQuestion(1)">
                         Next Question <i class="bi bi-arrow-right ms-2"></i>
                     </button>
                 </div>
             </main>
 
             <aside class="col-12 col-lg-4">
-                <div class="card border-0 shadow-sm rounded-4 p-4 sticky-top" style="top: 105px;">
-                    <h6 class="fw-bold text-dark mb-3">Examination Navigation Overview</h6>
+                <div class="card sidebar-nav-card shadow-sm rounded-4 p-4 sticky-top" style="top: 110px; z-index:10;">
+                    <h6 class="fw-bold text-white mb-3 fs-6">Examination Overview</h6>
                     
-                    <div class="d-flex flex-wrap gap-2 mb-4" id="navigationGridMatrix">
-                        </div>
+                    <div class="d-flex flex-wrap gap-2 mb-4" id="navigationGridMatrix"></div>
                     
-                    <hr class="text-muted my-3">
+                    <hr class="opacity-20 my-3" style="color: var(--text-muted);">
                     
                     <form id="finalExamSubmissionForm" action="SubmitExamServlet" method="POST">
                         <input type="hidden" name="serializedAnswers" id="serializedAnswersInput">
-                        <button type="button" class="btn btn-danger w-100 py-2.5 rounded-3 fw-bold shadow-sm" onclick="triggerExamSubmissionAlert()">
+                        <input type="hidden" name="timeElapsed" id="timeElapsedInput">
+                        
+                        <button type="button" class="btn btn-danger w-100 py-2.5 rounded-3 fw-bold shadow-sm" style="background-color: #dc2626; border-color: #dc2626;" onclick="triggerExamSubmissionAlert()">
                             <i class="bi bi-send-fill me-2"></i> Submit Examination Paper
                         </button>
                     </form>
@@ -293,7 +377,7 @@
                 label.innerHTML = `
                     <input type="radio" name="currentQuestionChoice" value="${key}" ${isChecked ? 'checked' : ''} onchange="logUserChoiceSelection('${currentQuestion.id}', '${key}')">
                     <span class="checkmark"></span>
-                    ${key}. ${val}
+                    <strong>${key}.</strong> &nbsp;${val}
                 `;
                 
                 choicesContainer.appendChild(label);
@@ -387,8 +471,17 @@
             const confirmationResponse = confirm(`You have answered ${totalAnswered} out of ${examQuestions.length} questions. Are you completely sure you want to lock in your answers and submit your exam layout paper?`);
             
             if (confirmationResponse) {
+                // Calculate exact elapsed duration string (90 minutes minus remaining time)
+                const totalDurationSeconds = 90 * 60;
+                const elapsedSeconds = totalDurationSeconds - totalExamTimeSeconds;
+                const elapsedMinutes = Math.floor(elapsedSeconds / 60);
+                const remainingSeconds = elapsedSeconds % 60;
+                const timeElapsedString = `${elapsedMinutes}m ${remainingSeconds}s`;
+
                 // Stringify choices matrix array log values and push to backend parameter layer
                 document.getElementById('serializedAnswersInput').value = JSON.stringify(selectedAnswersLog);
+                document.getElementById('timeElapsedInput').value = timeElapsedString;
+                
                 document.getElementById('finalExamSubmissionForm').submit();
             }
         }
