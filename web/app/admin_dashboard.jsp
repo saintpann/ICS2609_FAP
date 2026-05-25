@@ -27,7 +27,7 @@
             /* High Contrast Text Visibility Rules */
             --text-heading: #ffffff;
             --text-body: #cbd5e1;
-            --text-muted: #64748b;
+            --text-muted: #94a3b8;
         }
 
         body {
@@ -188,14 +188,13 @@
             <span class="fw-bold fs-5 text-white">EduPortal Admin</span>
         </div>
         <nav class="nav flex-column">
-            <a class="nav-link-custom" href="${pageContext.request.contextPath}/app/admin_dashboard.jsp"><i class="bi bi-sliders"></i> Control Center</a>
+            <a class="nav-link-custom active" href="${pageContext.request.contextPath}/app/admin_dashboard.jsp"><i class="bi bi-sliders"></i> Control Center</a>
             <a class="nav-link-custom" href="${pageContext.request.contextPath}/app/reports.jsp"><i class="bi bi-file-earmark-bar-graph-fill"></i> System Reports</a>
             <a class="nav-link-custom" href="${pageContext.request.contextPath}/directory"><i class="bi bi-people-fill"></i> User Directory</a>
             
             <hr class="mx-3 text-muted">
             
             <a class="nav-link-custom" href="${pageContext.request.contextPath}/settings.jsp"><i class="bi bi-gear-fill"></i> Account Settings</a>
-            
             <a class="nav-link-custom text-danger" href="${pageContext.request.contextPath}/logout"><i class="bi bi-box-arrow-left"></i> Sign Out</a>
         </nav>
     </aside>

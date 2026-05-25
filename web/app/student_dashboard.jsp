@@ -361,7 +361,7 @@
                             <i class="bi bi-person-lines-fill fs-3 me-3" style="color: #0D6EFD;"></i>
                             <h6 class="fw-bold text-white m-0">Personal Account Record</h6>
                         </div>
-                        <p class="text-muted small mb-4">Download a complete landscape PDF of your profile and exam history.</p>
+                        <p class="text-white-50 small mb-4">Download a complete landscape PDF of your profile and exam history.</p>
                         <a href="${pageContext.request.contextPath}/generateReport?action=selfReport" class="btn btn-outline-primary btn-sm fw-bold w-100 py-2 mt-auto">
                             <i class="bi bi-download me-1"></i> Download My Record
                         </a>
@@ -373,10 +373,19 @@
                             <i class="bi bi-award-fill fs-3 me-3" style="color: #8B5CF6;"></i>
                             <h6 class="fw-bold text-white m-0">Print Certificates</h6>
                         </div>
-                        <p class="text-muted small mb-4">Generate official printable certificate cards for your completed courses.</p>
-                        <a href="${pageContext.request.contextPath}/generateReport?action=printCertificates" class="btn btn-sm fw-bold w-100 py-2 mt-auto" style="background-color: #8B5CF6; color: white;">
-                            <i class="bi bi-printer me-1"></i> Print Certificates
-                        </a>
+                        <p class="text-white-50 small mb-4">Generate official printable certificate cards for your completed courses.</p>
+                        
+                        <div class="mt-auto">
+                            <% if (certCount > 0) { %>
+                                <a href="${pageContext.request.contextPath}/generateReport?action=printCertificates" class="btn btn-sm fw-bold w-100 py-2" style="background-color: #8B5CF6; color: white;">
+                                    <i class="bi bi-printer me-1"></i> Print Certificates
+                                </a>
+                            <% } else { %>
+                                <button class="btn btn-sm fw-bold w-100 py-2 text-center" disabled style="background-color: rgba(255,255,255,0.06); color: rgba(255,255,255,0.25); border: 1px solid rgba(255,255,255,0.05); cursor: not-allowed;">
+                                    <i class="bi bi-slash-circle me-1"></i> No Certificates Available
+                                </button>
+                            <% } %>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -17,9 +17,45 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: radial-gradient(circle at 50% 0%, #1a103c 0%, #000000 100%); background-attachment: fixed; color: #cbd5e1; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
-        .result-card { background: rgba(26, 18, 44, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.05); border-radius: 24px; padding: 3rem; text-align: center; max-width: 500px; width: 100%; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-        .score-circle { width: 120px; height: 120px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 2rem; font-size: 2rem; font-weight: bold; border: 4px solid; }
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: radial-gradient(circle at 50% 0%, #1a103c 0%, #000000 100%); 
+            background-attachment: fixed; 
+            color: #cbd5e1; 
+            min-height: 100vh; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            margin: 0;
+        }
+        
+        .result-card { 
+            background: rgba(26, 18, 44, 0.6); 
+            backdrop-filter: blur(12px); 
+            border: 1px solid rgba(255,255,255,0.05); 
+            border-radius: 24px; 
+            padding: 3rem; 
+            text-align: center; 
+            max-width: 500px; 
+            width: 100%; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5); 
+        }
+        
+        /* FIXED: Replaced static circular width sizing with an expansive capsule constraint to guarantee padding isolation */
+        .score-circle { 
+            min-width: 130px;
+            display: inline-flex; 
+            align-items: center; 
+            justify-content: center; 
+            margin: 0 auto 2rem; 
+            font-size: 2.25rem; 
+            font-weight: 700; 
+            border: 3px solid; 
+            border-radius: 100px;
+            padding: 0.75rem 2rem;
+            white-space: nowrap;
+        }
+        
         .pass-theme { color: #2DD4BF; border-color: #2DD4BF; background: rgba(45, 212, 191, 0.1); }
         .fail-theme { color: #EF4444; border-color: #EF4444; background: rgba(239, 68, 68, 0.1); }
     </style>
@@ -27,7 +63,7 @@
 <body>
 
     <div class="result-card">
-        <% if (passed) { %>
+        <% if (passed != null && passed) { %>
             <div class="score-circle pass-theme shadow-lg">
                 <%= finalScore %>%
             </div>

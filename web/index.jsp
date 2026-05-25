@@ -244,6 +244,11 @@
             }
             form.classList.add('was-validated');
         }, false);
+        window.addEventListener('pageshow', function (event) {
+                if (event.persisted) {
+                    window.location.reload();
+                }
+            });
     </script>
 </body>
 </html>

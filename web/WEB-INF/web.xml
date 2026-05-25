@@ -147,7 +147,7 @@
     </context-param>
     <context-param>
         <param-name>ExamDBURL</param-name>
-        <param-value>jdbc:postgresql://localhost:5432/ExamDB</param-value>
+        <param-value>jdbc:postgresql://localhost:5433/ExamDB</param-value>
     </context-param>
     <context-param>
         <param-name>ExamDBUser</param-name>
@@ -167,7 +167,7 @@
     </context-param>
     <context-param>
         <param-name>CertDBPass</param-name>
-        <param-value>root</param-value>
+        <param-value></param-value>
     </context-param>
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>

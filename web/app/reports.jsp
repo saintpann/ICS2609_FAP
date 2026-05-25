@@ -27,7 +27,7 @@
             /* High Contrast Text Rules */
             --text-heading: #ffffff;
             --text-body: #e2e8f0;
-            --text-muted: #64748b;
+            --text-muted: #94a3b8;
         }
 
         body {
@@ -138,7 +138,6 @@
             transition: all 0.2s ease;
         }
 
-        /* Fix calendar icon visibility color schemes in modern browsers */
         .form-control::-webkit-calendar-picker-indicator {
             filter: invert(1) sepia(1) saturate(5) hue-rotate(220deg);
             cursor: pointer;
@@ -195,15 +194,12 @@
         </div>
         <nav class="nav flex-column">
             <a class="nav-link-custom" href="${pageContext.request.contextPath}/app/admin_dashboard.jsp"><i class="bi bi-sliders"></i> Control Center</a>
-            
-            <a class="nav-link-custom text-dark fw-bold bg-light" href="${pageContext.request.contextPath}/app/reports.jsp"><i class="bi bi-file-earmark-bar-graph-fill text-primary"></i> System Reports</a>
-            
+            <a class="nav-link-custom active" href="${pageContext.request.contextPath}/app/reports.jsp"><i class="bi bi-file-earmark-bar-graph-fill"></i> System Reports</a>
             <a class="nav-link-custom" href="${pageContext.request.contextPath}/directory"><i class="bi bi-people-fill"></i> User Directory</a>
             
             <hr class="mx-3 text-muted">
             
             <a class="nav-link-custom" href="${pageContext.request.contextPath}/settings.jsp"><i class="bi bi-gear-fill"></i> Account Settings</a>
-            
             <a class="nav-link-custom text-danger" href="${pageContext.request.contextPath}/logout"><i class="bi bi-box-arrow-left"></i> Sign Out</a>
         </nav>
     </aside>
@@ -224,11 +220,11 @@
                 <div class="row g-3 mb-4">
                     <div class="col-12 col-sm-6">
                         <label class="form-label">Start Date Boundary</label>
-                        <input type="date" name="startDate" class="form-control p-2.5 text-white" required>
+                        <input type="date" id="startDate" name="startDate" class="form-control p-2.5 text-white" required>
                     </div>
                     <div class="col-12 col-sm-6">
                         <label class="form-label">End Date Boundary</label>
-                        <input type="date" name="endDate" class="form-control p-2.5 text-white" required>
+                        <input type="date" id="endDate" name="endDate" class="form-control p-2.5 text-white" required>
                     </div>
                 </div>
                 
@@ -237,37 +233,40 @@
                 </button>
             </form>
         </div>
-                <div class="card report-card mt-4">
+        
+        <div class="card report-card mt-4">
             <div class="d-flex align-items-center mb-3">
                 <i class="bi bi-people-fill fs-3 me-3" style="color: #2DD4BF;"></i>
-                <h5 class="fw-bold text-dark m-0">Master Directory Audit</h5>
+                <h5 class="fw-bold text-white m-0">Master Directory Audit</h5>
             </div>
-            <div class="card report-card mt-4">
-                <div class="d-flex align-items-center mb-3">
-                    <i class="bi bi-person-badge-fill fs-3 me-3" style="color: #EF4444;"></i>
-                    <h5 class="fw-bold text-dark m-0">Personal Account Record</h5>
-                </div>
-                <p class="text-muted small mb-4">
-                    Generates a landscape PDF containing only your personal administrator account details and system history.
-                </p>
-                <a href="${pageContext.request.contextPath}/generateReport?action=selfReport" class="btn w-100 py-2.5 rounded-3 fw-bold shadow-sm" style="background-color: #EF4444; color: #fff; border: none;">
-                    <i class="bi bi-file-earmark-pdf-fill me-1"></i> Download My Record
-                </a>
-            </div>
-            <p class="text-muted small mb-4">
+            <p style="color: var(--text-muted);" class="small mb-4">
                 Generates a complete landscape PDF of all system accounts, decoded passwords, and complete certification histories. 
                 <span class="text-danger fw-bold d-block mt-1">Highly Confidential. Handled with explicit administrative clearance only.</span>
             </p>
-            <a href="${pageContext.request.contextPath}/generateReport?action=allUsers" class="btn w-100 py-2.5 rounded-3 fw-bold shadow-sm" style="background-color: #2DD4BF; color: #fff; border: none;">
+            <a href="${pageContext.request.contextPath}/generateReport?action=allUsers" class="btn w-100 py-2.5 rounded-3 fw-bold shadow-sm" style="background-color: #2DD4BF; color: #000000; border: none;">
                 <i class="bi bi-file-earmark-pdf-fill me-1"></i> Download Master Report
             </a>
         </div>
+
+        <div class="card report-card mt-4">
+            <div class="d-flex align-items-center mb-3">
+                <i class="bi bi-person-badge-fill fs-3 me-3" style="color: #EF4444;"></i>
+                <h5 class="fw-bold text-white m-0">Personal Account Record</h5>
+            </div>
+            <p style="color: var(--text-muted);" class="small mb-4">
+                Generates a landscape PDF containing only your personal administrator account details and system history.
+            </p>
+            <a href="${pageContext.request.contextPath}/generateReport?action=selfReport" class="btn w-100 py-2.5 rounded-3 fw-bold shadow-sm" style="background-color: #EF4444; color: #fff; border: none;">
+                <i class="bi bi-file-earmark-pdf-fill me-1"></i> Download My Record
+            </a>
+        </div>
+
         <div class="card report-card mt-4 mb-5">
             <div class="d-flex align-items-center mb-3">
                 <i class="bi bi-award-fill fs-3 me-3" style="color: #F59E0B;"></i>
-                <h5 class="fw-bold text-dark m-0">Batch Certificate Export</h5>
+                <h5 class="fw-bold text-white m-0">Batch Certificate Export</h5>
             </div>
-            <p class="text-muted small mb-4">
+            <p style="color: var(--text-muted);" class="small mb-4">
                 Executes a system-wide query to generate official printable certificate cards for every passed exam in the database.
             </p>
             <a href="${pageContext.request.contextPath}/generateReport?action=printCertificates" class="btn w-100 py-2.5 rounded-3 fw-bold shadow-sm" style="background-color: #F59E0B; color: #fff; border: none;">
@@ -275,5 +274,37 @@
             </a>
         </div>
     </main>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const startDateInput = document.getElementById("startDate");
+            const endDateInput = document.getElementById("endDate");
+
+            // Fetch today's local date parameters in YYYY-MM-DD format standard
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            const maxDateString = yyyy + "-" + mm + "-" + dd;
+
+            // Block both calendars from selecting future dates out of bounds
+            startDateInput.max = maxDateString;
+            endDateInput.max = maxDateString;
+
+            // Dynamically lock the minimum end date based on whatever start date is chosen
+            startDateInput.addEventListener("change", function() {
+                if (startDateInput.value) {
+                    endDateInput.min = startDateInput.value;
+                    
+                    // If the current end date is older than the new start date, snap it to match the start date
+                    if (endDateInput.value && endDateInput.value < startDateInput.value) {
+                        endDateInput.value = startDateInput.value;
+                    }
+                } else {
+                    endDateInput.removeAttribute("min");
+                }
+            });
+        });
+    </script>
 </body>
 </html>

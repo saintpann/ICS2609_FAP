@@ -3,7 +3,9 @@ package controller;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.SQLException;
 import javax.servlet.ServletContext;
@@ -41,6 +43,22 @@ public class TableInitializationServlet extends HttpServlet {
         );
     }
 
+    /**
+     * Helper method to accurately check if a table exists across different RDBMS engines.
+     * Table names are evaluated case-insensitively to prevent engine mismatch.
+     */
+    private boolean tableExists(Connection conn, String tableName) throws SQLException {
+        DatabaseMetaData meta = conn.getMetaData();
+        // Check both lowercase and uppercase variations as engines handle metadata schemas differently
+        try (ResultSet rs = meta.getTables(null, null, tableName.toUpperCase(), new String[]{"TABLE"})) {
+            if (rs.next()) return true;
+        }
+        try (ResultSet rs = meta.getTables(null, null, tableName.toLowerCase(), new String[]{"TABLE"})) {
+            if (rs.next()) return true;
+        }
+        return false;
+    }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -55,22 +73,21 @@ public class TableInitializationServlet extends HttpServlet {
             out.println("body { font-family: Arial, sans-serif; margin: 40px; background-color: #f4f4f9; }");
             out.println(".status-box { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); max-width: 750px; }");
             out.println(".success { color: #155724; background-color: #d4edda; border: 1px solid #c3e6cb; padding: 12px; border-radius: 4px; margin-bottom: 10px; }");
+            out.println(".info { color: #0c5460; background-color: #d1ecf1; border: 1px solid #bee5eb; padding: 12px; border-radius: 4px; margin-bottom: 10px; }");
             out.println(".error { color: #721c24; background-color: #f8d7da; border: 1px solid #f5c6cb; padding: 12px; border-radius: 4px; margin-bottom: 10px; }");
             out.println("</style></head><body>");
-            out.println("<div class='status-box'><h2>Database Table Provisioning Engine (Fresh Reset)</h2><hr>");
+            out.println("<div class='status-box'><h2>Database Table Provisioning Engine (Conditional Reset)</h2><hr>");
 
-            // 1. Initialize Apache Derby (UserDB) - Clear & Regenerate
+            // 1. Initialize Apache Derby (UserDB)
             try (Connection conn = getDerbyConnection(context);
                  Statement stmt = conn.createStatement()) {
                 
-                // Derby doesn't support 'DROP TABLE IF EXISTS', so we catch the specific exception if it doesn't exist
-                try {
+                boolean exists = tableExists(conn, "Users");
+                if (exists) {
                     stmt.executeUpdate("DROP TABLE Users");
-                } catch (SQLException se) {
-                    // '42X05' means Table/View does not exist in Derby; ignore it if that's the case
-                    if (!"42X05".equals(se.getSQLState())) {
-                        throw se;
-                    }
+                    out.println("<div class='info'>ℹ️ <strong>Derby (UserDB):</strong> Detected pre-existing table. Safe drop executed.</div>");
+                } else {
+                    out.println("<div class='info'>ℹ️ <strong>Derby (UserDB):</strong> No prior schema detected. Skipping drop phase.</div>");
                 }
 
                 String derbySQL = "CREATE TABLE Users ("
@@ -80,19 +97,27 @@ public class TableInitializationServlet extends HttpServlet {
                                 + "role VARCHAR(20) NOT NULL"
                                 + ")";
                 stmt.executeUpdate(derbySQL);
-                out.println("<div class='success'>✅ <strong>Derby (UserDB):</strong> Dropped existing data and generated fresh 'Users' table successfully.</div>");
+                out.println("<div class='success'>✅ <strong>Derby (UserDB):</strong> Clean 'Users' table built successfully.</div>");
                 
             } catch (Exception e) {
                 out.println("<div class='error'>❌ <strong>Derby Reset Failure:</strong> " + e.getMessage() + "</div>");
             }
 
-            // 2. Initialize PostgreSQL (ExamDB) - Clear & Regenerate
+            // 2. Initialize PostgreSQL (ExamDB)
             try (Connection conn = getPostgresConnection(context);
                  Statement stmt = conn.createStatement()) {
                 
-                // CRITICAL SEQUENCE: Drop Questions first because it references Courses via Foreign Key
-                stmt.executeUpdate("DROP TABLE IF EXISTS Questions");
-                stmt.executeUpdate("DROP TABLE IF EXISTS Courses");
+                boolean questionsExist = tableExists(conn, "Questions");
+                boolean coursesExist = tableExists(conn, "Courses");
+
+                if (questionsExist || coursesExist) {
+                    // Drop in foreign key dependent order
+                    if (questionsExist) stmt.executeUpdate("DROP TABLE Questions");
+                    if (coursesExist) stmt.executeUpdate("DROP TABLE Courses");
+                    out.println("<div class='info'>ℹ️ <strong>PostgreSQL (ExamDB):</strong> Detected structural dependencies. Cascade drops completed safely.</div>");
+                } else {
+                    out.println("<div class='info'>ℹ️ <strong>PostgreSQL (ExamDB):</strong> Target environment is already clean. Skipping drop phase.</div>");
+                }
                 
                 String pgCoursesSQL = "CREATE TABLE Courses ("
                                     + "course_id SERIAL PRIMARY KEY, "
@@ -111,17 +136,23 @@ public class TableInitializationServlet extends HttpServlet {
                                       + ")";
                 stmt.executeUpdate(pgQuestionsSQL);
                 
-                out.println("<div class='success'>✅ <strong>PostgreSQL (ExamDB):</strong> Purged old records. Relational tables 'Courses' and 'Questions' re-initialized fresh.</div>");
+                out.println("<div class='success'>✅ <strong>PostgreSQL (ExamDB):</strong> Relational schemas 'Courses' and 'Questions' generated flawlessly.</div>");
                 
             } catch (Exception e) {
                 out.println("<div class='error'>❌ <strong>PostgreSQL Reset Failure:</strong> " + e.getMessage() + "</div>");
             }
 
-            // 3. Initialize MySQL (CertDB) - Clear & Regenerate
+            // 3. Initialize MySQL (CertDB)
             try (Connection conn = getMysqlConnection(context);
                  Statement stmt = conn.createStatement()) {
                 
-                stmt.executeUpdate("DROP TABLE IF EXISTS Certifications");
+                boolean exists = tableExists(conn, "Certifications");
+                if (exists) {
+                    stmt.executeUpdate("DROP TABLE Certifications");
+                    out.println("<div class='info'>ℹ️ <strong>MySQL (CertDB):</strong> Found existing data maps. Drop processing cleared.</div>");
+                } else {
+                    out.println("<div class='info'>ℹ️ <strong>MySQL (CertDB):</strong> Clean context verified. Skipping drop phase.</div>");
+                }
 
                 String mysqlSQL = "CREATE TABLE Certifications ("
                                 + "cert_id INT AUTO_INCREMENT PRIMARY KEY, "
@@ -132,13 +163,13 @@ public class TableInitializationServlet extends HttpServlet {
                                 + "INDEX idx_student (uname)"
                                 + ")";
                 stmt.executeUpdate(mysqlSQL);
-                out.println("<div class='success'>✅ <strong>MySQL (CertDB):</strong> Purged and optimized clean 'Certifications' structure successfully.</div>");
+                out.println("<div class='success'>✅ <strong>MySQL (CertDB):</strong> 'Certifications' production table deployed.</div>");
                 
             } catch (Exception e) {
                 out.println("<div class='error'>❌ <strong>MySQL Reset Failure:</strong> " + e.getMessage() + "</div>");
             }
 
-            out.println("<br><p>All previous structures and records cleared. You can now execute the database content hydration routine via <a href='seed'><strong>/seed</strong></a>.</p>");
+            out.println("<br><p>All environments structural setup complete. Seed operations can safely execute via <a href='seed'><strong>/seed</strong></a>.</p>");
             out.println("</div></body></html>");
         }
     }
